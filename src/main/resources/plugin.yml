@@ -1,6 +1,6 @@
 name: XJCraftBaseHomeBlueMapDrawer
 version: '${project.version}'
-main: github.shinyoki.bluemap.xjcraft.XJCraftBaseHomeBlueMapDrawer
+main: org.xjcraft.senkosan.bluemap.XJCraftBaseHomeBlueMapDrawer
 api-version: 1.18
 authors: [ senko ]
 description: 为小鸡服适配的BlueMap绘制插件

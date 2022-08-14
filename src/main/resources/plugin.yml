@@ -12,7 +12,7 @@ commands:
     description: 在BlueMap的地图上绘制玩家基地与家的命令方块Marker
     permission-message: 你还没有权限： <permission>
     permission: xjcraft.bluemap.default
-    usage: "请输入/xjb 获取帮助"
+    usage: "请输入/xjb help <子指令名> 获取帮助"
 permissions:
   xjcraft.bluemap.default:
     default: true

@@ -55,7 +55,7 @@ public abstract class ICmd {
     public ICmd(String cmdName, String cmdDesc, String cmdPermission) {
         this.cmdName = cmdName;
         this.cmdDesc = cmdDesc;
-        this.cmdPermission = this.cmdPermission.concat(".").concat(cmdName);
+        this.cmdPermission = this.cmdPermission.concat(".").concat(cmdPermission);
         appendTitle();
     }
 

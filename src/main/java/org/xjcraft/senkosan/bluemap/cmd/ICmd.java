@@ -22,7 +22,7 @@ public abstract class ICmd {
 
     public abstract boolean onCommand(CommandSender sender, String[] args);
 
-    public abstract List<String> onTabComplete(CommandSender sender, String[] args, List<String> completions);
+    public abstract List<String> onTabComplete(CommandSender sender, String[] args);
 
     protected abstract void editHelpMessage();
 

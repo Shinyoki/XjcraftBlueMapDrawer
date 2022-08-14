@@ -35,6 +35,7 @@ public class HtmlMarkerCreator implements ICreator {
     @Override
     public Marker createMarker(String markerId, String markerLabel, MarkerSet markerSet, BlueMapMap map, Location location, MarkerType markerType) {
         if (Objects.nonNull(html)) {
+            // DOM文档流会从方块的左上角开始，所以需要调整位置，使其居中
             HtmlMarker htmlMarker = markerSet.createHtmlMarker(markerId, map, new Vector3d(location.getX(), location.getY(), location.getZ()), html);
             htmlMarker.setLabel(markerLabel);
             return basicEditHtmlMarker(htmlMarker);
@@ -42,15 +43,16 @@ public class HtmlMarkerCreator implements ICreator {
 
         appendIcon(markerType);
 
-        HtmlMarker htmlMarker = markerSet.createHtmlMarker(markerId, map, new Vector3d(location.getX(), location.getY(), location.getZ()), getResult());
+        // DOM文档流会从方块的左上角开始，所以需要调整位置
+        HtmlMarker htmlMarker = markerSet.createHtmlMarker(markerId, map, new Vector3d(location.getX() + .5D, location.getY() + .5D, location.getZ() + .5D), getResult());
         htmlMarker.setLabel(markerLabel);
         return basicEditHtmlMarker(htmlMarker);
     }
 
     private HtmlMarker basicEditHtmlMarker(HtmlMarker htmlMarker) {
-        htmlMarker.setAnchor(0, 0);
-        htmlMarker.setMinDistance(5);
-        htmlMarker.setMaxDistance(600);
+        htmlMarker.setAnchor(0, 0);             // 锚点会导致渲染的图标发生偏移
+        htmlMarker.setMinDistance(5);                 // 设置最小距离，优化体验？
+        htmlMarker.setMaxDistance(600);               // 设置最大距离，防止自由视角下出现密密麻麻的图标
         return htmlMarker;
     }
 

@@ -23,8 +23,7 @@ public abstract class AbstractBlueMapManager {
     private BlueMapMap map;
 
     /**
-     * BlueMapAPI在2.0版本里存在很多破坏性的更新，
-     * 需要适配
+     * TODO BlueMapAPI在2.0版本里存在很多破坏性的更新，需要适配
      */
     private Integer blueMapAPIVersion = 1;
 

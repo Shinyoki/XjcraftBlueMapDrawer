@@ -48,7 +48,7 @@ public class RenderCmd extends ICmd {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, String[] args, List<String> completions) {
+    public List<String> onTabComplete(CommandSender sender, String[] args) {
         if (null == args || args.length < 1) {
             return null;
         }

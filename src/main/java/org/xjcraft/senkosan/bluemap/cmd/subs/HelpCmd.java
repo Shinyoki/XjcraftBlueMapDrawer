@@ -44,7 +44,7 @@ public class HelpCmd extends ICmd {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, String[] args, List<String> completions) {
+    public List<String> onTabComplete(CommandSender sender, String[] args) {
         if (Objects.isNull(args) || StringUtil.isBlank(args[0])) {
             // /xjb help
             return XJCraftBaseHomeBlueMapDrawer.getCommandHandler().getSubCommandsMap().entrySet().stream()

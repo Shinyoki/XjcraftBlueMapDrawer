@@ -119,7 +119,7 @@ public class XBMCommandHandler implements TabExecutor {
                 if (entry.getValue().hasPermission(sender)) {
                     if (entry.getKey().equalsIgnoreCase(subC)) {
                         // 完全匹配
-                        return entry.getValue().onTabComplete(sender, subArgs, null);
+                        return entry.getValue().onTabComplete(sender, subArgs);
                     }
                     if (entry.getKey().toLowerCase().startsWith(subC)) {
                         // 匹配开头

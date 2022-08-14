@@ -52,7 +52,7 @@ public class ChangeMarkerCmd extends ICmd {
      * /xjb change <markerCreatorName>
      */
     @Override
-    public List<String> onTabComplete(CommandSender sender, String[] args, List<String> completions) {
+    public List<String> onTabComplete(CommandSender sender, String[] args) {
 
         if (Objects.nonNull(args) && args.length == 0) {
             // 还没有输入指令参数，则返回所有的渲染方式名称

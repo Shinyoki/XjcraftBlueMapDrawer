@@ -1,0 +1,24 @@
+name: XJCraftBaseHomeBlueMapDrawer
+version: '${project.version}'
+main: github.shinyoki.bluemap.xjcraft.XJCraftBaseHomeBlueMapDrawer
+api-version: 1.18
+authors: [ senko ]
+description: 为小鸡服适配的BlueMap绘制插件
+depend:
+  - XJCraftAudit
+  - BlueMap
+commands:
+  xjb:
+    description: 在BlueMap的地图上绘制玩家基地与家的命令方块Marker
+    permission-message: 你还没有权限： <permission>
+    permission: xjcraft.bluemap.default
+    usage: "请输入/xjb 获取帮助"
+permissions:
+  xjcraft.bluemap.default:
+    default: true
+  xjcraft.bluemap.help:
+    default: true
+  xjcraft.bluemap.reload:
+    default: op
+  xjcraft.bluemap.render:
+    default: op

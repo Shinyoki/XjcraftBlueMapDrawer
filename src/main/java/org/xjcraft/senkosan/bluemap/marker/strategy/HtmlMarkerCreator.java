@@ -18,7 +18,7 @@ import java.util.Objects;
  */
 public class HtmlMarkerCreator implements ICreator {
 
-    private String defaultHtml = "<span style=\"text-align: center\">%s</span>";
+    private String defaultHtml = "<span style=\"text-align: center; z-index: 1;\">%s</span>";
     private String html = null;
     private StringBuilder sb;
 
@@ -51,8 +51,8 @@ public class HtmlMarkerCreator implements ICreator {
 
     private HtmlMarker basicEditHtmlMarker(HtmlMarker htmlMarker) {
         htmlMarker.setAnchor(0, 0);             // 锚点会导致渲染的图标发生偏移
-        htmlMarker.setMinDistance(5);                 // 设置最小距离，优化体验？
-        htmlMarker.setMaxDistance(600);               // 设置最大距离，防止自由视角下出现密密麻麻的图标
+//        htmlMarker.setMinDistance(5);                 // 设置最小距离，优化体验？
+//        htmlMarker.setMaxDistance(2000);               // 设置最大距离，防止自由视角下出现密密麻麻的图标
         return htmlMarker;
     }
 
@@ -65,11 +65,11 @@ public class HtmlMarkerCreator implements ICreator {
             case HOME:
                 sb.append("<svg t=\"1660369846448\" class=\"icon\" viewBox=\"0 0 1024 1024\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" p-id=\"2753\" width=\"15\" height=\"15\"><path d=\"M128 320l384-288 384 288zM272 592h482.976V992H272z\" fill=\"#E0EBFE\" p-id=\"2754\"></path><path d=\"M924.352 305.856c-0.896-1.792-2.112-3.296-3.328-4.928a31.104 31.104 0 0 0-4.352-4.864c-0.576-0.512-0.864-1.184-1.472-1.664l-384-288a32 32 0 0 0-38.4 0l-384 288c-0.64 0.48-0.896 1.152-1.472 1.664a31.104 31.104 0 0 0-4.352 4.896c-1.216 1.6-2.432 3.104-3.328 4.896-0.864 1.76-1.344 3.616-1.92 5.536a31.136 31.136 0 0 0-1.28 6.432C96.384 318.592 96 319.232 96 320v672a32 32 0 0 0 32 32h768a32 32 0 0 0 32-32V320c0-0.768-0.384-1.408-0.448-2.176a31.136 31.136 0 0 0-1.28-6.432c-0.576-1.92-1.056-3.776-1.92-5.536zM512 72L800 288H224l288-216zM736 960H288V608h448v352z m128 0h-96V592a16 16 0 0 0-16-16h-480a16 16 0 0 0-16 16V960H160V352h704v608z\" fill=\"#5465CF\" p-id=\"2755\"></path><path d=\"M368 704h288a16 16 0 1 0 0-32h-288a16 16 0 1 0 0 32zM368 800h288a16 16 0 1 0 0-32h-288a16 16 0 1 0 0 32zM368 896h288a16 16 0 1 0 0-32h-288a16 16 0 1 0 0 32z\" fill=\"#5465CF\" p-id=\"2756\"></path></svg>");
                 break;
-            case DEFAULT:
-                sb.append("<img src=\"")
-                        .append(BlueMapUtil.getBlueMapIcon(BlueMapUtil.BaseIcon.DEFAULT))
-                        .append("\"/>");
-                break;
+//            case DEFAULT:
+//                sb.append("<img src=\"")
+//                        .append(BlueMapUtil.getBlueMapIcon(BlueMapUtil.BaseIcon.DEFAULT))
+//                        .append("\"/>");
+//                break;
         }
     }
 

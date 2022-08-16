@@ -31,14 +31,7 @@ public class XJCraftBlueMapContext {
     public static void reloadConfig() {
         Bukkit.getScheduler().runTask(XJCraftBaseHomeBlueMapDrawer.getInstance(), () -> {
             getBlueMapManager().reloadConfig();
-            Log.info("重新读取配置文件成功！");
-
-            Bukkit.getScheduler().runTaskAsynchronously(XJCraftBaseHomeBlueMapDrawer.getInstance(), () -> {
-                // 重新渲染
-                getBlueMapManager().renderAll();
-                Log.info("重新渲染Markers完成！");
-            });
-
+            Log.info("重新读取配置文件完成！");
         });
     }
 

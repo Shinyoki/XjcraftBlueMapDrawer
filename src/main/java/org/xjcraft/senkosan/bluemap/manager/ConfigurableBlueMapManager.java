@@ -15,8 +15,8 @@ import org.xjcraft.senkosan.bluemap.enums.MarkerType;
 import org.xjcraft.senkosan.bluemap.exception.XBMPluginException;
 import org.xjcraft.senkosan.bluemap.utils.Log;
 
-import java.io.IOException;
 import java.util.Optional;
+import java.util.concurrent.Future;
 
 /**
  * 提供获取基地以及家的坐标，以及默认配置
@@ -30,7 +30,6 @@ public abstract class ConfigurableBlueMapManager extends AbstractBlueMapManager 
     private String basePrefix = "senko.render.";
     private String homeLocationKey = MapConstants.XJCRAFT_HOME_TAG;
     private String baseLocationKey = MapConstants.XJCRAFT_BASE_TAG;
-    private boolean allInOne = false;
     private boolean defaultShowHome = false;
     private boolean defaultShowBase = true;
     private FileConfiguration configuration;
@@ -49,10 +48,18 @@ public abstract class ConfigurableBlueMapManager extends AbstractBlueMapManager 
     }
 
     public void reloadConfig() {
+
         Log.info("重新读取配置文件...");
+
+        // 重载
         XJCraftBaseHomeBlueMapDrawer plugin = XJCraftBaseHomeBlueMapDrawer.getInstance();
         plugin.reloadConfig();
-        initKey(plugin.getConfig());
+        FileConfiguration cfg = plugin.getConfig();
+
+        // 修改配置
+        initKey(cfg);
+        Log.setIsDebugMode(cfg.getBoolean("senko.debug-mode"));
+
     }
 
     /**
@@ -71,8 +78,6 @@ public abstract class ConfigurableBlueMapManager extends AbstractBlueMapManager 
                     .orElseThrow(() -> new XBMPluginException("未能正确获取配置文件中的配置项：" + basePrefix + homeLocationKey));
             this.baseLocationKey = Optional.ofNullable(pluginConfig.getString(basePrefix + baseLocationKey))
                     .orElseThrow(() -> new XBMPluginException("未能正确获取配置文件中的配置项：" + basePrefix + baseLocationKey));
-            this.allInOne = Optional.ofNullable(pluginConfig.getBoolean(basePrefix + ".all-in-one"))
-                    .orElse(false);
             this.defaultShowHome = Optional.ofNullable(pluginConfig.getBoolean(basePrefix + ".default-show-home"))
                     .orElse(false);
             this.defaultShowBase = Optional.ofNullable(pluginConfig.getBoolean(basePrefix + ".default-show-base"))
@@ -128,22 +133,6 @@ public abstract class ConfigurableBlueMapManager extends AbstractBlueMapManager 
 
     }
 
-    /**
-     * 获取单独展示用的MarkerSet
-     */
-    public MarkerSet getAllInOneMarkerSet() {
-
-        return getMarkerAPI().getMarkerSet(MapConstants.ALL_IN_ONE_MARKER_SET_ID)
-                .orElseGet(() -> {
-                    MarkerSet ms = getMarkerAPI().createMarkerSet(MapConstants.ALL_IN_ONE_MARKER_SET_ID);
-                    ms.setToggleable(true);
-                    ms.setDefaultHidden(true);
-                    ms.setLabel(MapConstants.ALL_IN_ONE_MARKER_SET_LABEL);
-                    return ms;
-                });
-
-    }
-
     public Location getBaseLocation(Player player) {
         return getBaseLocation(player.getName());
     }
@@ -153,16 +142,11 @@ public abstract class ConfigurableBlueMapManager extends AbstractBlueMapManager 
     }
 
     public Location getBaseLocation(String playerName) {
-        return getPlayerMeta(playerName).getLocation(homeLocationKey);
-    }
-
-    public Location getHomeLocation(String playerName) {
         return getPlayerMeta(playerName).getLocation(baseLocationKey);
     }
 
-
-    public boolean isAllInOne() {
-        return allInOne;
+    public Location getHomeLocation(String playerName) {
+        return getPlayerMeta(playerName).getLocation(homeLocationKey);
     }
 
     public boolean isDefaultShowHome() {
@@ -171,6 +155,13 @@ public abstract class ConfigurableBlueMapManager extends AbstractBlueMapManager 
 
     public boolean isDefaultShowBase() {
         return defaultShowBase;
+    }
+
+    public Future<?> renderMarkerAsynchronously(String playerName) {
+        return XJCraftBaseHomeBlueMapDrawer.getExecutorService()
+                .submit(() -> {
+                    renderMarker(playerName);
+                });
     }
 
     @Override
@@ -182,36 +173,18 @@ public abstract class ConfigurableBlueMapManager extends AbstractBlueMapManager 
         }
 
         // 如果认证通过却没有设置基地和小镇，则坐标不存在，此时不会创建Marker
-        for (MarkerSet markerSet : getMarkerSets()) {
+        for (MarkerSet markerSet : getRenderMarkerSets()) {
 
             // 如果是基地的MarkerSet，则渲染基地的Marker
             if (markerSet.getId().equals(MapConstants.BASE_MARKER_SET_ID)) {
-                Optional.ofNullable(getBaseLocation(playerName))
-                        .ifPresent(location -> createMarker(playerName, location, MarkerType.BASE, markerSet));
+                createBaseMarker(playerName, markerSet);
             }
 
             // 如果是小镇的MarkerSet，则渲染小镇的Marker
             else if (markerSet.getId().equals(MapConstants.HOME_MARKER_SET_ID)) {
-                Optional.ofNullable(getHomeLocation(playerName))
-                        .ifPresent(location -> createMarker(playerName, location, MarkerType.HOME, markerSet));
+                createHomeMarker(playerName, markerSet);
             }
 
-            // 如果是单独显示的MarkerSet，则渲染在同一个MarkerSet里
-            else if (markerSet.getId().equals(MapConstants.ALL_IN_ONE_MARKER_SET_ID)) {
-                Optional.ofNullable(getBaseLocation(playerName))
-                        .ifPresent(location -> createMarker(playerName, location, MarkerType.BASE, markerSet));
-                Optional.ofNullable(getHomeLocation(playerName))
-                        .ifPresent(location -> createMarker(playerName, location, MarkerType.HOME, markerSet));
-                return;
-            }
-
-        }
-
-        try {
-            getMarkerAPI().save();
-        } catch (IOException e) {
-            Log.error("保存自定义Marker失败！");
-            throw new RuntimeException(e);
         }
 
     }
@@ -220,21 +193,33 @@ public abstract class ConfigurableBlueMapManager extends AbstractBlueMapManager 
      * 获取MarkerSet，如果是单独显示，则返回一个MarkerSet，
      * 否则返回两个MarkerSet，分别用于展示基地和小镇的Marker
      */
-    protected MarkerSet[] getMarkerSets() {
-        if (allInOne) {
-            return new MarkerSet[]{getAllInOneMarkerSet()};
-        } else {
-            return new MarkerSet[]{getBaseMarkerSet(), getHomeMarkerSet()};
-        }
+    protected MarkerSet[] getRenderMarkerSets() {
+        return new MarkerSet[]{getBaseMarkerSet(), getHomeMarkerSet()};
+    }
+
+    protected void createBaseMarker(String playerName, MarkerSet markerSet) {
+        Optional.ofNullable(getBaseLocation(playerName))
+                .ifPresent(baseLocation -> {
+                    // 有基地
+                    createMarker(playerName, baseLocation, MarkerType.BASE, markerSet);
+                });
+    }
+
+    protected void createHomeMarker(String playerName, MarkerSet markerSet) {
+        Optional.ofNullable(getHomeLocation(playerName))
+                .ifPresent(homeLocation -> {
+                    // 有小镇
+                    createMarker(playerName, homeLocation, MarkerType.HOME, markerSet);
+                });
     }
 
     /**
      * 创建Marker
      *
-     * @param playerName   玩家名称
-     * @param location 基地坐标
-     * @param markerType   Marker类型：{@link MarkerType}
-     * @param markerSet    MarkerSet
+     * @param playerName 玩家名称
+     * @param location   基地坐标
+     * @param markerType Marker类型：{@link MarkerType}
+     * @param markerSet  MarkerSet
      */
     protected abstract Marker createMarker(String playerName, Location location, MarkerType markerType, MarkerSet markerSet);
 

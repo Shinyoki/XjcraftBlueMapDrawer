@@ -1,10 +1,9 @@
 senko:
+  debug-mode: false # 开启debug模式
   render:
     # 与XJcraftAudit中设置玩家命令方块的配置名保持一致
     town-cmdlocation: 'town-cmdlocation'
     base-cmdlocation: 'base-cmdlocation'
-    # 家和基地的markers渲染在同一个MarkerSet里
-    all-in-one: false
     # 自动显示marker
     default-show-home: false
     default-show-base: true

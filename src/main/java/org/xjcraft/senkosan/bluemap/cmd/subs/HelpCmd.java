@@ -26,25 +26,33 @@ public class HelpCmd extends ICmd {
 
         XBMCommandHandler commandHandler = XJCraftBaseHomeBlueMapDrawer.getCommandHandler();
         if (Objects.isNull(args) || args.length == 0) {
+
             // /xjb help
-            sender.sendMessage(commandHandler.getHelp(sender));
+            String subCmdsUsages = XJCraftBaseHomeBlueMapDrawer.getCommandHandler()
+                    .getSubCmdsUsages();
+            sender.sendMessage(subCmdsUsages);
             return true;
+
         } else if (args.length > 0) {
+
             // /xjb help <子指令>
             String cmdName = args[0].toLowerCase();
             ICmd cmd = commandHandler.getSubCommand(cmdName);
+
             if (Objects.isNull(cmd) || !cmd.hasPermission(sender)) {
                 sender.sendMessage(ChatColor.RED + "没有找到指令" + cmdName);
                 return true;
             }
             sender.sendMessage(cmd.getCmdUsage());
             return true;
+
         }
         return false;
+
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, String[] args) {
+    public List<String> onTabComplete(CommandSender sender, String[] args ) {
         if (Objects.isNull(args) || StringUtil.isBlank(args[0])) {
             // /xjb help
             return XJCraftBaseHomeBlueMapDrawer.getCommandHandler().getSubCommandsMap().entrySet().stream()
@@ -66,6 +74,7 @@ public class HelpCmd extends ICmd {
 
     @Override
     protected void editHelpMessage() {
-        this.appendNewLine("/xjb help <子指令>", "获取指令的使用方法");
+        this.appendNewLine("/xjb help <子指令>", "获取指令的使用方法（不许套娃）");
     }
+
 }

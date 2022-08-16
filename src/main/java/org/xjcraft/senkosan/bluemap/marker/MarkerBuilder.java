@@ -71,8 +71,6 @@ public class MarkerBuilder {
                 return playerName + "的基地";
             case HOME:
                 return playerName + "的家";
-            case DEFAULT:
-                return "";
         }
         return "";
     }
@@ -80,11 +78,9 @@ public class MarkerBuilder {
     private String getMarkerId(String playerName) {
         switch (markerType) {
             case BASE:
-                return playerName + MapConstants.BASE_MARKER_ID_SUFFIX;
+                return playerName.toLowerCase() + MapConstants.BASE_MARKER_ID_SUFFIX;
             case HOME:
-                return playerName + MapConstants.HOME_MARKER_ID_SUFFIX;
-            case DEFAULT:
-                return playerName + MapConstants.ALL_IN_ONE_MARKER_ID_SUFFIX;
+                return playerName.toLowerCase() + MapConstants.HOME_MARKER_ID_SUFFIX;
         }
         return "";
     }

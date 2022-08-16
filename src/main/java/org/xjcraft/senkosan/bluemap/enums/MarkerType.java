@@ -16,12 +16,7 @@ public enum MarkerType {
     /**
      * 小镇
      */
-    HOME(MapConstants.HOME_MARKER_SET_ID, MapConstants.HOME_MARKER_ID_SUFFIX),
-
-    /**
-     * 单独显示
-     */
-    DEFAULT(MapConstants.ALL_IN_ONE_MARKER_SET_ID, MapConstants.ALL_IN_ONE_MARKER_ID_SUFFIX);
+    HOME(MapConstants.HOME_MARKER_SET_ID, MapConstants.HOME_MARKER_ID_SUFFIX);
 
     private String markerSetId;     // markerSet的id
     private String markerSuffix;    // marker的后缀：如 '的基地'
@@ -37,6 +32,10 @@ public enum MarkerType {
 
     public String getMarkerSuffix() {
         return markerSuffix;
+    }
+
+    public String getMarkerId(String playerName) {
+        return playerName.toLowerCase().concat(markerSuffix);
     }
 
 }

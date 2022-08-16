@@ -2,6 +2,7 @@ package org.xjcraft.senkosan.bluemap.cmd;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.xjcraft.senkosan.bluemap.utils.StringUtil;
 
 import java.util.List;
 import java.util.Objects;
@@ -39,9 +40,10 @@ public abstract class ICmd {
         return cmdPermission;
     }
 
-    public ICmd(String cmdName, String cmdPermission) {
+    public ICmd(String cmdName, String cmdDesc) {
         this.cmdName = cmdName;
-        this.cmdPermission = cmdPermission;
+        this.cmdDesc = cmdDesc;
+        this.cmdPermission = this.cmdPermission.concat(".default");
         appendTitle();
     }
 
@@ -54,7 +56,8 @@ public abstract class ICmd {
     public ICmd(String cmdName, String cmdDesc, String cmdPermission) {
         this.cmdName = cmdName;
         this.cmdDesc = cmdDesc;
-        this.cmdPermission = this.cmdPermission.concat(".").concat(cmdPermission);
+        this.cmdPermission = StringUtil.isNotBlank(cmdPermission) ? this.cmdPermission.concat(".").concat(cmdPermission) :
+                this.cmdPermission.concat(".op");
         appendTitle();
     }
 
@@ -64,7 +67,7 @@ public abstract class ICmd {
 
     private void appendTitle() {
         resetHelpMessage();
-        cmdUsage.append("\n===============").append(ChatColor.GOLD).append(this.cmdName).append(ChatColor.WHITE).append("===============");
+        cmdUsage.append(ChatColor.GRAY).append("\n=============== ").append(ChatColor.GOLD).append(this.cmdName).append(ChatColor.GRAY).append(" ===============");
         this.editHelpMessage();
     }
 

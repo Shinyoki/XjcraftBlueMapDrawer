@@ -1,28 +1,33 @@
 package org.xjcraft.senkosan.bluemap.cmd.subs;
 
-import org.bukkit.ChatColor;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.xjcraft.senkosan.bluemap.cmd.ICmd;
+import org.xjcraft.senkosan.bluemap.manager.DefaultBlueMapManager;
 import org.xjcraft.senkosan.bluemap.manager.XJCraftBlueMapContext;
 
 import java.util.List;
 
 /**
- * 重新读取配置文件
+ * 删除标记集合
  *
  * @author senko
- * @date 2022/8/14 9:38
+ * @date 2022/8/15 22:06
  */
-public class ReloadConfigCmd extends ICmd {
+public class RemoveMarkerSetCmd extends ICmd {
 
-    public ReloadConfigCmd() {
-        super("reload", "重新读取配置文件", "reload");
+    public RemoveMarkerSetCmd() {
+        super("remove", "删除标记集", "remove");
     }
 
     @Override
     public boolean onCommand(CommandSender sender, String[] args) {
-        XJCraftBlueMapContext.reloadConfig();
-        sender.sendMessage("成功重新读取配置文件！如需立即生效，请使用/xjb render指令！");
+
+        DefaultBlueMapManager blueMapManager = XJCraftBlueMapContext.getBlueMapManager();
+
+        // /xjb remove
+        blueMapManager.removeAllMarkerSet(sender);
         return true;
     }
 
@@ -33,7 +38,7 @@ public class ReloadConfigCmd extends ICmd {
 
     @Override
     protected void editHelpMessage() {
-        this.appendNewLine("/xjb reload", "重新读取配置文件");
+        this.appendNewLine("/xjb remove", "删除所有标记");
     }
 
 }

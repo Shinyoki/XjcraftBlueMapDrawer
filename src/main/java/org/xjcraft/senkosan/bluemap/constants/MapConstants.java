@@ -34,14 +34,14 @@ public class MapConstants {
 
     public static final String XJCRAFT_HOME_TAG = "town-cmdlocation";
 
-    /**
-     * 单独显示
-     */
-    public static final String ALL_IN_ONE_MARKER_SET_ID = "ALL_IN_ONE_MARKER_SET";
-
-    public static final String ALL_IN_ONE_MARKER_ID_SUFFIX = "_ALL_IN_ONE_MARKER";
-
-    public static final String ALL_IN_ONE_MARKER_SET_LABEL = "传送点";
+//    /**
+//     * 单独显示
+//     */
+//    public static final String ALL_IN_ONE_MARKER_SET_ID = "ALL_IN_ONE_MARKER_SET";
+//
+//    public static final String ALL_IN_ONE_MARKER_ID_SUFFIX = "_ALL_IN_ONE_MARKER";
+//
+//    public static final String ALL_IN_ONE_MARKER_SET_LABEL = "传送点";
 
     public static final String DEFAULT_IMAGE_PATH = "house.png";
 

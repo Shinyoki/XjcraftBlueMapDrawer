@@ -10,6 +10,8 @@ import org.xjcraft.senkosan.bluemap.XJCraftBaseHomeBlueMapDrawer;
  */
 public class Log {
 
+    private static boolean isDebugMode = false;
+
     /**
      * 级别：INFO
      */
@@ -31,4 +33,22 @@ public class Log {
         XJCraftBaseHomeBlueMapDrawer.getInstance().getLogger().severe(message);
     }
 
+    public static void d(String message) {
+        debug(message);
+    }
+
+    public static void debug(String message) {
+        if (isDebugMode) {
+            info(message);
+        }
+        // do-nothing
+    }
+
+    public static boolean isIsDebugMode() {
+        return isDebugMode;
+    }
+
+    public static void setIsDebugMode(boolean isDebugMode) {
+        Log.isDebugMode = isDebugMode;
+    }
 }

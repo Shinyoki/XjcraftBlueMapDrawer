@@ -4,10 +4,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
-import org.xjcraft.senkosan.bluemap.cmd.subs.ChangeMarkerCmd;
-import org.xjcraft.senkosan.bluemap.cmd.subs.HelpCmd;
-import org.xjcraft.senkosan.bluemap.cmd.subs.ReloadConfigCmd;
-import org.xjcraft.senkosan.bluemap.cmd.subs.RenderCmd;
+import org.xjcraft.senkosan.bluemap.cmd.subs.*;
 import org.xjcraft.senkosan.bluemap.utils.StringUtil;
 
 import java.util.*;
@@ -28,7 +25,8 @@ public class XBMCommandHandler implements TabExecutor {
     private Map<String, ICmd> subCommands = new HashMap<>() {{
         put("reload", new ReloadConfigCmd());
         put("render", new RenderCmd());
-        put("change", new ChangeMarkerCmd());
+        put("remove", new RemoveMarkerSetCmd());
+//        put("change", new ChangeMarkerCmd());  // TODO 重构
         put("help", new HelpCmd());
     }};
 
@@ -148,6 +146,19 @@ public class XBMCommandHandler implements TabExecutor {
     public String getHelp(String cmdName) {
         return getSubCommand(cmdName)
                 .getCmdUsage();
+    }
+
+    public String getSubCmdsUsages() {
+        StringBuilder sb = new StringBuilder("\n");
+        sb.append(ChatColor.GRAY.toString()).append("==============").append(ChatColor.GOLD).append(" XJCraft-BlueMap-Adapter-Plugin").append(ChatColor.GRAY).append(" ==============\n");
+        getSubCommandsMap().forEach((key, value) -> {
+            if (!key.equalsIgnoreCase("help")) {
+                sb.append(ChatColor.GOLD).append("/xjb ").append(key).append(ChatColor.WHITE).append(" - ").append(value.getCmdDesc()).append("\n");
+            } else {
+                sb.append(ChatColor.GOLD).append("/xjb ").append(key).append(" <子指令> ").append(ChatColor.WHITE).append(" - ").append(value.getCmdDesc()).append("\n");
+            }
+        });
+        return sb.toString();
     }
 
 }

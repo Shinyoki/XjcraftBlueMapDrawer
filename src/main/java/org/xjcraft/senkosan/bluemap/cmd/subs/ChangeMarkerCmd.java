@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
  * @author senko
  * @date 2022/8/14 10:16
  */
+@Deprecated
 public class ChangeMarkerCmd extends ICmd {
 
     public ChangeMarkerCmd() {

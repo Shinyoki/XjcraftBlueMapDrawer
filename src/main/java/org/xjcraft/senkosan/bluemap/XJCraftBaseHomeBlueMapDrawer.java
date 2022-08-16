@@ -6,6 +6,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.xjcraft.senkosan.bluemap.cmd.XBMCommandHandler;
 import org.xjcraft.senkosan.bluemap.exception.XBMPluginException;
+import org.xjcraft.senkosan.bluemap.listener.AuditStatusChangeListener;
 import org.xjcraft.senkosan.bluemap.manager.XJCraftBlueMapContext;
 import org.xjcraft.senkosan.bluemap.utils.Log;
 
@@ -26,7 +27,14 @@ public final class XJCraftBaseHomeBlueMapDrawer extends JavaPlugin {
 
     @Override
     public void onLoad() {
+
+        // 初始化线程池
         initThreadPool();
+        // 加载配置
+        this.saveDefaultConfig();
+        this.reloadConfig();
+        Log.setIsDebugMode(getConfig().getBoolean("senko.debug-mode"));
+
     }
 
     @Override
@@ -78,8 +86,13 @@ public final class XJCraftBaseHomeBlueMapDrawer extends JavaPlugin {
 
                 Log.info("绘制Markers中...");
 
+                // 删除以前的MarkerSet
+                XJCraftBlueMapContext.getBlueMapManager()
+                        .removeAllMarkerSet(null);
+
                 // 渲染所有玩家的Markers
-                XJCraftBlueMapContext.getBlueMapManager().renderAll();
+                XJCraftBlueMapContext.getBlueMapManager()
+                        .renderAll(null);
 
                 // 注册指令执行器
                 Optional.ofNullable(getCommand("xjb"))
@@ -87,6 +100,9 @@ public final class XJCraftBaseHomeBlueMapDrawer extends JavaPlugin {
                             commandHandler = new XBMCommandHandler();
                             command.setExecutor(commandHandler);
                         });
+
+                // 添加监听器
+                Bukkit.getPluginManager().registerEvents(new AuditStatusChangeListener(), this);
                 Log.info("初始化完成");
             });
         } catch (Exception ignore) {

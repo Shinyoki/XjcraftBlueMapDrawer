@@ -8,6 +8,7 @@ import org.xjcraft.senkosan.bluemap.cmd.XBMCommandHandler;
 import org.xjcraft.senkosan.bluemap.exception.XBMPluginException;
 import org.xjcraft.senkosan.bluemap.listener.AuditStatusChangeListener;
 import org.xjcraft.senkosan.bluemap.manager.XJCraftBlueMapContext;
+import org.xjcraft.senkosan.bluemap.utils.BlueMapUtil;
 import org.xjcraft.senkosan.bluemap.utils.Log;
 
 import java.util.Objects;
@@ -23,6 +24,9 @@ public final class XJCraftBaseHomeBlueMapDrawer extends JavaPlugin {
 
     public static XJCraftBaseHomeBlueMapDrawer getInstance() {
         return instance;
+    }
+    public static ClassLoader getSpigotClassLoader() {
+        return getInstance().getClassLoader();
     }
 
     @Override
@@ -64,6 +68,7 @@ public final class XJCraftBaseHomeBlueMapDrawer extends JavaPlugin {
 
         // BlueMap加载好后再初始化
         BlueMapAPI.onEnable(api -> this.init());
+//        BlueMapAPI.onDisable(api -> );
 
     }
 
@@ -74,6 +79,9 @@ public final class XJCraftBaseHomeBlueMapDrawer extends JavaPlugin {
      */
     private void init() {
 
+        for (BlueMapUtil.BaseIcon value : BlueMapUtil.BaseIcon.values()) {
+            BlueMapUtil.checkMapIcon(value);
+        }
         try {
             // 需回到插件主线程
             Bukkit.getScheduler().runTask(this, () -> {
@@ -86,11 +94,8 @@ public final class XJCraftBaseHomeBlueMapDrawer extends JavaPlugin {
 
                 Log.info("绘制Markers中...");
 
-                // 删除以前的MarkerSet
-                XJCraftBlueMapContext.getBlueMapManager()
-                        .removeAllMarkerSet(null);
-
                 // 渲染所有玩家的Markers
+                XJCraftBlueMapContext.resetManager();
                 XJCraftBlueMapContext.getBlueMapManager()
                         .renderAll(null);
 
@@ -138,6 +143,7 @@ public final class XJCraftBaseHomeBlueMapDrawer extends JavaPlugin {
             // 初始化线程池
             executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors(), r -> {
                 Thread thread = new Thread(r);
+                thread.setDaemon(true);
                 thread.setName("XJCraftBaseHomeBlueMapDrawer-Thread");
                 return thread;
             });
@@ -149,4 +155,10 @@ public final class XJCraftBaseHomeBlueMapDrawer extends JavaPlugin {
     public static synchronized ExecutorService getExecutorService() {
         return executorService == null ? initThreadPool() : executorService;
     }
+
+    public static void submit(Runnable runnable) {
+        getExecutorService()
+                .submit(runnable);
+    }
+
 }

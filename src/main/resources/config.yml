@@ -1,9 +1,12 @@
 senko:
   debug-mode: false # 开启debug模式
   render:
-    # 与XJcraftAudit中设置玩家命令方块的配置名保持一致
-    town-cmdlocation: 'town-cmdlocation'
-    base-cmdlocation: 'base-cmdlocation'
     # 自动显示marker
     default-show-home: false
     default-show-base: true
+  xjcraft:
+    # 与XJcraftAudit中设置玩家命令方块的配置名保持一致
+    town-cmdlocation: 'town-cmdlocation'
+    base-cmdlocation: 'base-cmdlocation'
+    # 存放玩家认证信息文件的所在文件夹相对路径 如 status
+    apply-player-meta-path: 'status'

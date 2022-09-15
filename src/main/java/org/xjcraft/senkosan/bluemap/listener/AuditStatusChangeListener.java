@@ -34,11 +34,7 @@ public class AuditStatusChangeListener implements Listener {
         String name = event.getPlayer().getName();
 
         DefaultBlueMapManager manager = XJCraftBlueMapContext.getBlueMapManager();
-        XJCraftBaseHomeBlueMapDrawer.getExecutorService()
-                .submit(() -> {
-                    manager.renderMarker(name);
-                    manager.save();
-                });
+        manager.renderMarkerAsynchronously(name);
 
     }
 

@@ -47,10 +47,8 @@ public class RenderCmd extends ICmd {
                 }
                 String finalPlayerName1 = playerName;
                 sender.sendMessage("正在渲染玩家 " + finalPlayerName1 + " 的基地与家的图标...");
-                XJCraftBaseHomeBlueMapDrawer.getExecutorService()
-                        .submit(() -> {
+                XJCraftBaseHomeBlueMapDrawer.submit(() -> {
                             manager.renderMarker(args[0]);
-                            manager.save();
                             sender.sendMessage("玩家" + ChatColor.GOLD + finalPlayerName1 + ChatColor.WHITE + "基地与家的图标渲染完成!");
                         });
                 return true;

@@ -25,14 +25,17 @@ public class XJCraftBlueMapContext {
         return blueMapManager;
     }
 
+    public static void resetManager() {
+        blueMapManager = null;
+    }
+
     /**
      * 修改配置文件后，重新加载配置
      */
     public static void reloadConfig() {
-        Bukkit.getScheduler().runTask(XJCraftBaseHomeBlueMapDrawer.getInstance(), () -> {
-            getBlueMapManager().reloadConfig();
-            Log.info("重新读取配置文件完成！");
-        });
+        resetManager();
+        getBlueMapManager().reloadConfig();
+        Log.info("重新读取配置文件完成！");
     }
 
     /**

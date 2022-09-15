@@ -70,26 +70,23 @@
 
     <dependencies>
 
-<!--        BlueMap Api: v1.7.0-->
-        <dependency>
-            <groupId>com.github.BlueMap-Minecraft</groupId>
-            <artifactId>BlueMapAPI</artifactId>
-            <version>v1.7.0</version>
-            <scope>provided</scope>
-        </dependency>
+<!--        BlueMap Api: v2.1.1-->
+<!--        XJCraftAudit: v1.4.4-->
 
-        <!--        Spigot API-->
+<!--        Spigot Api: 1.18-->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>1.18-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
-            <groupId>org.jim</groupId>
-            <artifactId>XJCraftAudit</artifactId>
-            <version>1.4.4</version>
+            <groupId>org.realityforge.org.jetbrains.annotations</groupId>
+            <artifactId>org.jetbrains.annotations</artifactId>
             <scope>provided</scope>
+            <version>1.7.0</version>
         </dependency>
+
     </dependencies>
 </project>

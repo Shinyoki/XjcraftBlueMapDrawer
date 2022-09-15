@@ -1,8 +1,9 @@
 package org.xjcraft.senkosan.bluemap.marker;
 
+
 import de.bluecolored.bluemap.api.BlueMapMap;
-import de.bluecolored.bluemap.api.marker.Marker;
-import de.bluecolored.bluemap.api.marker.MarkerSet;
+import de.bluecolored.bluemap.api.markers.Marker;
+import de.bluecolored.bluemap.api.markers.MarkerSet;
 import org.bukkit.Location;
 import org.jim.bukkit.audit.util.Assert;
 import org.xjcraft.senkosan.bluemap.constants.MapConstants;
@@ -62,7 +63,7 @@ public class MarkerBuilder {
         Assert.notNull(markerSet, "MarkerSet不能为空");
         Assert.notNull(map, "Map不能为空");
         Assert.notNull(location, "Location不能为空");
-        return creator.createMarker(getMarkerId(playerName), getLabel(playerName), markerSet, map, location, markerType);
+        return creator.createMarker(getMarkerId(playerName), getLabel(playerName), markerSet, location, markerType);
     }
 
     private String getLabel(String playerName) {

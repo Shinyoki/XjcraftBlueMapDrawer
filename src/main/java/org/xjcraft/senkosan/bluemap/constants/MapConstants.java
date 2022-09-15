@@ -43,7 +43,7 @@ public class MapConstants {
 //
 //    public static final String ALL_IN_ONE_MARKER_SET_LABEL = "传送点";
 
-    public static final String DEFAULT_IMAGE_PATH = "house.png";
+    public static final String DEFAULT_IMAGE_PATH = "images/house.png";
 
     /**
      * HTML常量

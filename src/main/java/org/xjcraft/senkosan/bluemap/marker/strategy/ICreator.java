@@ -1,8 +1,8 @@
 package org.xjcraft.senkosan.bluemap.marker.strategy;
 
 import de.bluecolored.bluemap.api.BlueMapMap;
-import de.bluecolored.bluemap.api.marker.Marker;
-import de.bluecolored.bluemap.api.marker.MarkerSet;
+import de.bluecolored.bluemap.api.markers.Marker;
+import de.bluecolored.bluemap.api.markers.MarkerSet;
 import org.bukkit.Location;
 import org.xjcraft.senkosan.bluemap.enums.MarkerType;
 
@@ -13,5 +13,5 @@ import org.xjcraft.senkosan.bluemap.enums.MarkerType;
  * @date 2022/8/14 8:29
  */
 public interface ICreator {
-    Marker createMarker(String markerId, String markerLabel, MarkerSet markerSet, BlueMapMap map, Location location, MarkerType markerType);
+    Marker createMarker(String markerId, String markerLabel, MarkerSet markerSet, Location location, MarkerType markerType);
 }

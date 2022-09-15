@@ -1,6 +1,5 @@
 package org.xjcraft.senkosan.bluemap.cmd.subs;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.xjcraft.senkosan.bluemap.cmd.ICmd;
 import org.xjcraft.senkosan.bluemap.manager.XJCraftBlueMapContext;

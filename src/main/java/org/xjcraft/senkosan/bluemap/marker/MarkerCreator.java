@@ -1,12 +1,12 @@
 package org.xjcraft.senkosan.bluemap.marker;
 
 import de.bluecolored.bluemap.api.BlueMapMap;
-import de.bluecolored.bluemap.api.marker.Marker;
-import de.bluecolored.bluemap.api.marker.MarkerSet;
+import de.bluecolored.bluemap.api.markers.Marker;
+import de.bluecolored.bluemap.api.markers.MarkerSet;
 import org.bukkit.Location;
 import org.xjcraft.senkosan.bluemap.enums.MarkerType;
-import org.xjcraft.senkosan.bluemap.marker.strategy.HtmlMarkerCreator;
 import org.xjcraft.senkosan.bluemap.marker.strategy.ICreator;
+import org.xjcraft.senkosan.bluemap.marker.strategy.POIMarkerCreator;
 
 /**
  * Marker的创建者
@@ -16,7 +16,7 @@ import org.xjcraft.senkosan.bluemap.marker.strategy.ICreator;
  */
 public enum MarkerCreator {
 
-    HTML("html", new HtmlMarkerCreator());
+    POI("POI", new POIMarkerCreator());
 
     MarkerCreator(String creatorName, ICreator creator) {
         this.creatorName = creatorName;
@@ -34,8 +34,8 @@ public enum MarkerCreator {
     private String creatorName;
     private ICreator creator;
 
-    public Marker createMarker(String markerId, String markerLabel, MarkerSet markerSet, BlueMapMap map, Location location, MarkerType markerType) {
-        return creator.createMarker(markerId, markerLabel, markerSet, map, location, markerType);
+    public Marker createMarker(String markerId, String markerLabel, MarkerSet markerSet, Location location, MarkerType markerType) {
+        return creator.createMarker(markerId, markerLabel, markerSet, location, markerType);
     }
 
 }

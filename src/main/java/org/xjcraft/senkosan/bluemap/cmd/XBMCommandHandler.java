@@ -30,6 +30,7 @@ public class XBMCommandHandler implements TabExecutor {
         put("help", new HelpCmd());
         put("show", new ShowOnlinePlayerCmd());
         put("hide", new HideOnlinePlayerCmd());
+        put("test", new TestCmd());
     }};
 
     public ICmd getSubCommand(String cmdName) {

@@ -17,9 +17,9 @@ import java.net.URL;
 public class MojangUtil {
 
     // 玩家名查询玩家信息api
-    private static final String MOJANG_API = "https://api.mojang.com/users/profiles/minecraft/";
+    public static final String MOJANG_API = "https://api.mojang.com/users/profiles/minecraft/";
     // uuid获取头像URL api
-    private static final String PLAYER_HEAD_API = "https://crafatar.com/avatars/";
+    public static final String PLAYER_HEAD_API = "https://crafatar.com/avatars/";
 
     /**
      * 根据玩家名获取玩家UUID信息
@@ -60,7 +60,7 @@ public class MojangUtil {
         String uuid = getPlayerUUID(playerName);
         if (uuid == null || uuid.trim().equals("")) {
             // BlueMap默认的头像，文件位于 服务端/bluemap/web/ 文件夹
-            return "/assets/steve.png";
+            return "assets/steve.png";
         }
         return PLAYER_HEAD_API + uuid;
     }

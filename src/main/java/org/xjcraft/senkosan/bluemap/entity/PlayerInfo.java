@@ -1,5 +1,6 @@
 package org.xjcraft.senkosan.bluemap.entity;
 
+import com.flowpowered.math.vector.Vector3d;
 import com.google.gson.annotations.SerializedName;
 import org.bukkit.Location;
 
@@ -10,14 +11,16 @@ import org.bukkit.Location;
  * @author senko
  * @date 2023/2/4 12:54
  */
-public class PlayerInfo {
+public class PlayerInfo implements Cloneable{
 
     @SerializedName("name")
     private String playerName;
     @SerializedName("id")
     private String playerUUID;
-    private Location location;
-    private Integer word = 1;           // 0: 主世界，1: nether，2: end
+    private double x;
+    private double y;
+    private double z;
+    private int dimension = 1;           // 0: 主世界，1: nether，2: end
 
     public String getPlayerName() {
         return playerName;
@@ -35,20 +38,40 @@ public class PlayerInfo {
         this.playerUUID = playerUUID;
     }
 
-    public Location getLocation() {
-        return location;
+    public Vector3d getLocation() {
+        return new Vector3d(x, y, z);
     }
 
-    public void setLocation(Location location) {
-        this.location = location;
+    public double getX() {
+        return x;
     }
 
-    public Integer getWord() {
-        return word;
+    public void setX(double x) {
+        this.x = x;
     }
 
-    public void setWord(Integer word) {
-        this.word = word;
+    public double getY() {
+        return y;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+    }
+
+    public double getZ() {
+        return z;
+    }
+
+    public void setZ(double z) {
+        this.z = z;
+    }
+
+    public int getDimension() {
+        return dimension;
+    }
+
+    public void setDimension(int dimension) {
+        this.dimension = dimension;
     }
 
     public PlayerInfo(String playerName, String playerUUID) {
@@ -56,17 +79,21 @@ public class PlayerInfo {
         this.playerUUID = playerUUID;
     }
 
-    public PlayerInfo(String playerName, String playerUUID, Location location) {
+    public PlayerInfo(String playerName, String playerUUID, int dimension, double x, double y, double z) {
         this.playerName = playerName;
         this.playerUUID = playerUUID;
-        this.location = location;
+        this.dimension = dimension;
+        this.x = x;
+        this.y = y;
+        this.z = z;
     }
 
-    public PlayerInfo(String playerName, String playerUUID, Location location, Integer word) {
-        this.playerName = playerName;
-        this.playerUUID = playerUUID;
-        this.location = location;
-        this.word = word;
+    @Override
+    public PlayerInfo clone() {
+        try {
+            return (PlayerInfo) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
-
 }

@@ -55,11 +55,23 @@ public abstract class ConfigurableBlueMapManager extends AbstractMarkerManager {
         return serverMapName;
     }
 
+    public int getDimensionByWorldName(String worldName) {
+        if (worldName.equals(getMainLandMapName())) {
+            return 0;
+        } else if (worldName.equals(getNetherMapName())) {
+            return 1;
+        } else if (worldName.equals(getTheEndMapName())) {
+            return 2;
+        } else {
+            throw new XBMPluginException("未知的世界名称：" + worldName);
+        }
+    }
+
     public String getNetherMapName() {
         return serverMapName + "_nether";
     }
 
-    public String getEndMapName() {
+    public String getTheEndMapName() {
         return serverMapName + "_the_end";
     }
 

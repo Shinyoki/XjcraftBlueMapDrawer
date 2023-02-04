@@ -48,9 +48,9 @@ public class MapConstants {
     public static final String ONLINE_PLAYER_MARKER_LABEL_SUFFIX = "";
 
     // TODO 小鸡服的地图ID MainLand、MainLand_nether、MainLand_the_end 以后记得改
-    public static final String MAIN_LAND_MAP_ID = "world";
-    public static final String NETHER_MAP_ID = "world_nether";
-    public static final String THE_END_MAP_ID = "world_the_end";
+    public static final String MAIN_LAND_MAP_ID = "MainLand";
+    public static final String NETHER_MAP_ID = "MainLand_nether";
+    public static final String THE_END_MAP_ID = "MainLand_the_end";
 
     /**
      * HTML常量

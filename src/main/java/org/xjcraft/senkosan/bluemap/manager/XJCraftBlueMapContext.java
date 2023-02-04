@@ -1,7 +1,5 @@
 package org.xjcraft.senkosan.bluemap.manager;
 
-import org.bukkit.Bukkit;
-import org.xjcraft.senkosan.bluemap.XJCraftBaseHomeBlueMapDrawer;
 import org.xjcraft.senkosan.bluemap.marker.MarkerCreator;
 import org.xjcraft.senkosan.bluemap.utils.Log;
 

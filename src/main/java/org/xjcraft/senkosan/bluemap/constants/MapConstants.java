@@ -34,16 +34,23 @@ public class MapConstants {
 
     public static final String XJCRAFT_HOME_TAG = "town-cmdlocation";
 
-//    /**
-//     * 单独显示
-//     */
-//    public static final String ALL_IN_ONE_MARKER_SET_ID = "ALL_IN_ONE_MARKER_SET";
-//
-//    public static final String ALL_IN_ONE_MARKER_ID_SUFFIX = "_ALL_IN_ONE_MARKER";
-//
-//    public static final String ALL_IN_ONE_MARKER_SET_LABEL = "传送点";
-
     public static final String DEFAULT_IMAGE_PATH = "images/house.png";
+
+    /**
+     * 在线玩家
+     */
+    public static final String MAIN_LAND_ONLINE_PLAYER_MARKER_SET_ID = "MAIN_LAND_ONLINE_PLAYER_MARKER_SET";
+    public static final String NETHER_ONLINE_PLAYER_MARKER_SET_ID = "NETHER_ONLINE_PLAYER_MARKER_SET";
+    public static final String THE_END_ONLINE_PLAYER_MARKER_SET_ID = "THE_END_ONLINE_PLAYER_MARKER_SET";
+
+    public static final String ONLINE_PLAYER_MARKER_SET_LABEL = "在线玩家";
+    public static final String ONLINE_PLAYER_MARKER_ID_SUFFIX = "";
+    public static final String ONLINE_PLAYER_MARKER_LABEL_SUFFIX = "";
+
+    // TODO 小鸡服的地图ID MainLand、MainLand_nether、MainLand_the_end 以后记得改
+    public static final String MAIN_LAND_MAP_ID = "world";
+    public static final String NETHER_MAP_ID = "world_nether";
+    public static final String THE_END_MAP_ID = "world_the_end";
 
     /**
      * HTML常量

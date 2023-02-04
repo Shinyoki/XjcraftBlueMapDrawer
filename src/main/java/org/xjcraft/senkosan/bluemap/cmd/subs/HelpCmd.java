@@ -13,6 +13,9 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
+ * 获取提示
+ * /xjb help <subCmds>
+ *
  * @author senko
  * @date 2022/8/14 13:23
  */

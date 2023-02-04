@@ -19,6 +19,8 @@ public class SenkoBlueMapConfig {
         public static Boolean DEFAULT_SHOW_HOME = Boolean.FALSE;
         public static Boolean DEFAULT_SHOW_BASE = Boolean.TRUE;
 
+        public static String SERVER_MAP_NAME = "MainLand";
+
     }
 
     /**
@@ -32,6 +34,8 @@ public class SenkoBlueMapConfig {
         public static final String TOWN_CMD_LOCATION = "senko.xjcraft.town-cmdlocation";         // 认证玩家的家命令方块坐标的key
         public static final String BASE_CMD_LOCATION = "senko.xjcraft.base-cmdlocation";         // 认证玩家的基地命令方块坐标的key
         public static final String DEBUG_MODE = "senko.debug-mode";                             // 是否开启调试模式
+
+        public static final String SERVER_MAP_NAME = "senko.xjcraft.server-map-name";
 
     }
 

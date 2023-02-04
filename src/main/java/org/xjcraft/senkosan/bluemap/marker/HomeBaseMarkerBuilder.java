@@ -14,7 +14,7 @@ import org.xjcraft.senkosan.bluemap.enums.MarkerType;
  * @author senko
  * @date 2022/8/14 8:02
  */
-public class MarkerBuilder {
+public class HomeBaseMarkerBuilder {
 
     private String playerName;            // Marker的id
     private MarkerSet markerSet;        // Marker的所在集合
@@ -22,36 +22,36 @@ public class MarkerBuilder {
     private Location location;          // Marker的位置
     private MarkerType markerType;      // Marker的类型
 
-    public static MarkerBuilder builder() {
-        return new MarkerBuilder();
+    public static HomeBaseMarkerBuilder builder() {
+        return new HomeBaseMarkerBuilder();
     }
 
-    public MarkerBuilder playerName(String playerName) {
+    public HomeBaseMarkerBuilder playerName(String playerName) {
         Assert.notNull(playerName, "markerId");
         this.playerName = playerName;
         return this;
     }
 
 
-    public MarkerBuilder markerSet(MarkerSet markerSet) {
+    public HomeBaseMarkerBuilder markerSet(MarkerSet markerSet) {
         Assert.notNull(markerSet, "markerSet");
         this.markerSet = markerSet;
         return this;
     }
 
-    public MarkerBuilder map(BlueMapMap map) {
+    public HomeBaseMarkerBuilder map(BlueMapMap map) {
         Assert.notNull(map, "map");
         this.map = map;
         return this;
     }
 
-    public MarkerBuilder location(Location location) {
+    public HomeBaseMarkerBuilder location(Location location) {
         Assert.notNull(location, "location");
         this.location = location;
         return this;
     }
 
-    public MarkerBuilder markerType(MarkerType markerType) {
+    public HomeBaseMarkerBuilder markerType(MarkerType markerType) {
         Assert.notNull(markerType, "markerType");
         this.markerType = markerType;
         return this;

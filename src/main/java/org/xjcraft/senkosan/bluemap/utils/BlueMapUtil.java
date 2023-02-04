@@ -54,6 +54,19 @@ public class BlueMapUtil {
         return "data/images/" + icon.getIconName() + ".png";
     }
 
+    /**
+     * 生成玩家头像HTML模板
+     * @param playerName    玩家名
+     * @return              HTML模板
+     */
+    public static String getOnlinePlayerIconHtml(String playerName) {
+        String playerHeadUrl = MojangUtil.getPlayerHeadUrl(playerName);
+        return "<div class=\"bm-marker-player\" distance-data=\"near\">\n" +
+                "            <img draggable=\"false\" alt=\"" + playerName + "\" src=\"" + playerHeadUrl + "\"/>\n" +
+                "            <div class=\"bm-player-name\">" + playerName + "</div>\n" +
+                "        </div>";
+    }
+
     public static String checkMapIcon(BaseIcon icon) {
         Path webRoot = getBlueMapAPI().getWebApp()
                 .getWebRoot();

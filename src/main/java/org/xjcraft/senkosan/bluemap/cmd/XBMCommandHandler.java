@@ -28,6 +28,8 @@ public class XBMCommandHandler implements TabExecutor {
         put("remove", new RemoveMarkerSetCmd());
 //        put("change", new ChangeMarkerCmd());  // TODO 重构
         put("help", new HelpCmd());
+        put("show", new ShowOnlinePlayerCmd());
+        put("hide", new HideOnlinePlayerCmd());
     }};
 
     public ICmd getSubCommand(String cmdName) {

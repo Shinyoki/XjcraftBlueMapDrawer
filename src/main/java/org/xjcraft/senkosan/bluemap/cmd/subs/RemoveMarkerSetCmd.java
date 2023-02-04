@@ -1,8 +1,6 @@
 package org.xjcraft.senkosan.bluemap.cmd.subs;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.xjcraft.senkosan.bluemap.cmd.ICmd;
 import org.xjcraft.senkosan.bluemap.enums.MarkerType;
 import org.xjcraft.senkosan.bluemap.manager.DefaultBlueMapManager;
@@ -12,6 +10,7 @@ import java.util.List;
 
 /**
  * 删除标记集合
+ * /xjb remove
  *
  * @author senko
  * @date 2022/8/15 22:06
@@ -28,8 +27,8 @@ public class RemoveMarkerSetCmd extends ICmd {
         DefaultBlueMapManager blueMapManager = XJCraftBlueMapContext.getBlueMapManager();
 
         // /xjb remove
-        blueMapManager.resetMarkerSet(MarkerType.HOME);
-        blueMapManager.resetMarkerSet(MarkerType.BASE);
+        blueMapManager.resetHomeBaseMarkerSet(MarkerType.HOME);
+        blueMapManager.resetHomeBaseMarkerSet(MarkerType.BASE);
         sender.sendMessage("删除标记集需要花费一定时间后才能生效，如果迟迟没有生效，请尝试使用/xjb reload命令后再执行");
         return true;
     }

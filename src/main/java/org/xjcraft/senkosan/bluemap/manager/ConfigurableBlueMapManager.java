@@ -8,7 +8,6 @@ import org.jim.bukkit.audit.AuditPlugin;
 import org.jim.bukkit.audit.PlayerMeta;
 import org.jim.bukkit.audit.apply.ApplyHelper;
 import org.xjcraft.senkosan.bluemap.XJCraftBaseHomeBlueMapDrawer;
-import org.xjcraft.senkosan.bluemap.constants.MapConstants;
 import org.xjcraft.senkosan.bluemap.enums.MarkerType;
 import org.xjcraft.senkosan.bluemap.exception.XBMPluginException;
 import org.xjcraft.senkosan.bluemap.utils.Log;
@@ -43,11 +42,25 @@ public abstract class ConfigurableBlueMapManager extends AbstractMarkerManager {
     private boolean defaultShowBase;
     // applyHelper中存放玩家信息文件的所在文件夹相对路径
     private String playerMetaFolder;
+    // 服务器地图名称
+    private String serverMapName;
 
     public ConfigurableBlueMapManager() {
         this.applyHelper = AuditPlugin.getPlugin()
                 .getHelper();
         this.initKey(XJCraftBaseHomeBlueMapDrawer.getInstance().getConfig());
+    }
+
+    public String getMainLandMapName() {
+        return serverMapName;
+    }
+
+    public String getNetherMapName() {
+        return serverMapName + "_nether";
+    }
+
+    public String getEndMapName() {
+        return serverMapName + "_the_end";
     }
 
     /**
@@ -101,6 +114,7 @@ public abstract class ConfigurableBlueMapManager extends AbstractMarkerManager {
      * allInOne：是否将基地和家的Marker合并，默认为false
      * defaultShowHome：是否显示家（小镇）的Marker，默认为false，false是为了放置占满屏幕
      * defaultShowBase：是否显示基地，默认为true
+     * serverMapName: BlueMap中对应的地图名称前缀，默认为"world"
      */
     private void initKey(FileConfiguration pluginConfig) {
 
@@ -115,6 +129,8 @@ public abstract class ConfigurableBlueMapManager extends AbstractMarkerManager {
                     .orElse(DEFAULT_VALUE.DEFAULT_SHOW_HOME);
             this.defaultShowBase = Optional.of(pluginConfig.getBoolean(KEY.DEFAULT_SHOW_BASE))
                     .orElse(DEFAULT_VALUE.DEFAULT_SHOW_BASE);
+            this.serverMapName = Optional.of(pluginConfig.getString(KEY.SERVER_MAP_NAME))
+                    .orElse(DEFAULT_VALUE.SERVER_MAP_NAME);
         } catch (XBMPluginException e) {
             Log.warning(e.getMessage());
         }
@@ -160,12 +176,12 @@ public abstract class ConfigurableBlueMapManager extends AbstractMarkerManager {
     public Future<?> renderMarkerAsynchronously(String playerName) {
         return XJCraftBaseHomeBlueMapDrawer.getExecutorService()
                 .submit(() -> {
-                    renderMarker(playerName);
+                    renderHomeBaseMarker(playerName);
                 });
     }
 
     @Override
-    public void renderMarker(String playerName) {
+    public void renderHomeBaseMarker(String playerName) {
 
         // 如果玩家还未认证通过，则一定没有基地和小镇
         if (false == getApplyHelper().isApply(playerName)) {
@@ -180,7 +196,7 @@ public abstract class ConfigurableBlueMapManager extends AbstractMarkerManager {
         Optional.ofNullable(getBaseLocation(playerName))
                 .ifPresent(baseLocation -> {
                     // 有基地
-                    createMarker(playerName, baseLocation, MarkerType.BASE, getBaseMarkerSet());
+                    createHomeBaseMarker(playerName, baseLocation, MarkerType.BASE, getBaseMarkerSet());
                 });
     }
 
@@ -188,7 +204,7 @@ public abstract class ConfigurableBlueMapManager extends AbstractMarkerManager {
         Optional.ofNullable(getHomeLocation(playerName))
                 .ifPresent(homeLocation -> {
                     // 有小镇
-                    createMarker(playerName, homeLocation, MarkerType.HOME, getHomeMarkerSet());
+                    createHomeBaseMarker(playerName, homeLocation, MarkerType.HOME, getHomeMarkerSet());
                 });
     }
 
@@ -200,17 +216,17 @@ public abstract class ConfigurableBlueMapManager extends AbstractMarkerManager {
      * @param markerType Marker类型：{@link MarkerType}
      * @param markerSet  MarkerSet
      */
-    protected abstract void createMarker(String playerName, Location location, MarkerType markerType, MarkerSet markerSet);
+    protected abstract void createHomeBaseMarker(String playerName, Location location, MarkerType markerType, MarkerSet markerSet);
 
     @Override
-    protected MarkerSet buildMarkerSet(MarkerType markerType) {
+    protected MarkerSet buildHomeBaseMarkerSet(MarkerType markerType) {
         // 如果不存在该标点集合，则创建一个新的标点集合
         MarkerSet markerSet = MarkerSet.builder()
                 .defaultHidden(markerType.equals(MarkerType.HOME) ? !defaultShowHome : !defaultShowBase)
                 .label(markerType.getMarkerSetLabel())
                 .toggleable(true)
                 .build();
-        getMapToRender().getMarkerSets()
+        getMainLandMap().getMarkerSets()
                 .put(markerType.getMarkerSetId(), markerSet);
         return markerSet;
     }

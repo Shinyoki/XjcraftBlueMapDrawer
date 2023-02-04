@@ -15,6 +15,9 @@ import java.util.List;
 import java.util.Optional;
 
 /**
+ * 开始渲染 家与基地 Markers
+ * /xjb render <player>
+ *
  * @author senko
  * @date 2022/8/14 9:52
  */
@@ -32,7 +35,7 @@ public class RenderCmd extends ICmd {
             DefaultBlueMapManager manager = XJCraftBlueMapContext.getBlueMapManager();
             if (null == args || args.length < 1) {
                 // /xjb render
-                manager.renderAll(sender);
+                manager.renderAllHomeBaseMarker(sender);
                 return true;
             } else if (args.length == 1) {
                 // 只有一个参数，渲染相应的玩家基地与家的图标
@@ -48,7 +51,7 @@ public class RenderCmd extends ICmd {
                 String finalPlayerName1 = playerName;
                 sender.sendMessage("正在渲染玩家 " + finalPlayerName1 + " 的基地与家的图标...");
                 XJCraftBaseHomeBlueMapDrawer.submit(() -> {
-                            manager.renderMarker(args[0]);
+                            manager.renderHomeBaseMarker(args[0]);
                             sender.sendMessage("玩家" + ChatColor.GOLD + finalPlayerName1 + ChatColor.WHITE + "基地与家的图标渲染完成!");
                         });
                 return true;

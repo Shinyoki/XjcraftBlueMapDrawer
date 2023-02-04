@@ -18,7 +18,12 @@ public enum MarkerType {
     /**
      * 小镇
      */
-    HOME(MapConstants.HOME_MARKER_SET_ID, MapConstants.HOME_MARKER_ID_SUFFIX, MapConstants.HOME_MARKER_SET_LABEL);
+    HOME(MapConstants.HOME_MARKER_SET_ID, MapConstants.HOME_MARKER_ID_SUFFIX, MapConstants.HOME_MARKER_SET_LABEL),
+
+    /**
+     * 在线玩家图标
+     */
+    ONLINE_PLAYER(MapConstants.MAIN_LAND_ONLINE_PLAYER_MARKER_SET_ID, MapConstants.ONLINE_PLAYER_MARKER_ID_SUFFIX, MapConstants.ONLINE_PLAYER_MARKER_SET_LABEL);
 
     private final String markerSetId;     // markerSet的id
     private final String markerSuffix;    // marker的后缀：如 '的基地'

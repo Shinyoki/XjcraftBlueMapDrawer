@@ -25,11 +25,11 @@ import static org.xjcraft.senkosan.bluemap.enums.MarkerType.*;
  * @author senko
  * @date 2022/9/15 11:16
  */
-public abstract class AbstractMarkerManager {
+public abstract class AbstractMarkerManager implements IRenderOnlinePlayerMarker {
 
     private BlueMapAPI mapApi;
 
-    private BlueMapMap mapToRender;
+    private BlueMapMap mainLandMap;
 
     private MarkerSet baseMarkerSet;
 
@@ -47,12 +47,12 @@ public abstract class AbstractMarkerManager {
             Bukkit.getPluginManager().disablePlugin(XJCraftBaseHomeBlueMapDrawer.getInstance());
             return new XBMPluginException("未能正确获取BlueMap相关API，请检查是否正确加载了BlueMap插件");
         });
-        this.mapToRender = mapApi.getMap("world").orElseThrow(() -> {
+        this.mainLandMap = mapApi.getMap("world").orElseThrow(() -> {
             Bukkit.getPluginManager().disablePlugin(XJCraftBaseHomeBlueMapDrawer.getInstance());
             return new XBMPluginException("未能正确获取BlueMap地图，请检查是否正确加载了BlueMap插件");
         });
-        this.baseMarkerSet = buildMarkerSet(BASE);
-        this.homeMarkerSet = buildMarkerSet(HOME);
+        this.baseMarkerSet = buildHomeBaseMarkerSet(BASE);
+        this.homeMarkerSet = buildHomeBaseMarkerSet(HOME);
 
     }
 
@@ -61,22 +61,29 @@ public abstract class AbstractMarkerManager {
      * @param markerType    Marker类型
      * @return              MarkerSet
      */
-    public MarkerSet getMarkerSet(MarkerType markerType) {
-        return markerType.equals(HOME) ? homeMarkerSet : baseMarkerSet;
+    public MarkerSet getHomeBaseMarkerSet(MarkerType markerType) {
+        switch (markerType) {
+            case BASE:
+                return baseMarkerSet;
+            case HOME:
+                return homeMarkerSet;
+            default:
+                throw new XBMPluginException("不支持的Marker类型");
+        }
     }
 
     /**
      * 重置markerSet
      */
-    public void resetMarkerSet(MarkerType markerType) {
-        MarkerSet markerSet = getMarkerSet(markerType);
+    public void resetHomeBaseMarkerSet(MarkerType markerType) {
+        MarkerSet markerSet = getHomeBaseMarkerSet(markerType);
         if (Objects.nonNull(markerSet)) {
             markerSet.getMarkers()
                     .clear();
         }
     }
 
-    public void renderAll(final CommandSender sender) {
+    public void renderAllHomeBaseMarker(final CommandSender sender) {
 
 
         XJCraftBaseHomeBlueMapDrawer.submit(() -> {
@@ -88,7 +95,7 @@ public abstract class AbstractMarkerManager {
 
                 long beforeRender = System.currentTimeMillis();
                 // 在开始渲染钱
-                playerNames.forEach(this::renderMarker);
+                playerNames.forEach(this::renderHomeBaseMarker);
                 Log.d("渲染所有标点花费的时间：" + (System.currentTimeMillis() - beforeRender) + "ms");
 
                 long beforeSave = System.currentTimeMillis();
@@ -126,33 +133,32 @@ public abstract class AbstractMarkerManager {
         return markerType.equals(BASE) ? getBaseMarkerSet() : getHomeMarkerSet();
     }
     public MarkerSet getHomeMarkerSet() {
-        return getMarkerSet(HOME);
+        return getHomeBaseMarkerSet(HOME);
     }
 
     public MarkerSet getBaseMarkerSet() {
-        return getMarkerSet(BASE);
+        return getHomeBaseMarkerSet(BASE);
     }
 
     public BlueMapAPI getMapApi() {
         return mapApi;
     }
 
-    public BlueMapMap getMapToRender() {
-        return mapToRender;
+    public BlueMapMap getMainLandMap() {
+        return mainLandMap;
     }
 
     public void setMapApi(BlueMapAPI mapApi) {
         this.mapApi = mapApi;
     }
 
-    public void setMapToRender(BlueMapMap mapToRender) {
-        this.mapToRender = mapToRender;
+    public void setMainLandMap(BlueMapMap mainLandMap) {
+        this.mainLandMap = mainLandMap;
     }
 
+    public abstract void renderHomeBaseMarker(String playerName);
     // abstract methods
-    protected abstract MarkerSet buildMarkerSet(MarkerType markerType);
-
-    public abstract void renderMarker(String playerName);
+    protected abstract MarkerSet buildHomeBaseMarkerSet(MarkerType markerType);
 
     public abstract List<String> getPlayersToRender();
 

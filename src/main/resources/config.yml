@@ -10,3 +10,5 @@ senko:
     base-cmdlocation: 'base-cmdlocation'
     # 存放玩家认证信息文件的所在文件夹相对路径 如 status
     apply-player-meta-path: 'status'
+    # 服务器地图名称，如MainLand
+    server-map-name: 'world'

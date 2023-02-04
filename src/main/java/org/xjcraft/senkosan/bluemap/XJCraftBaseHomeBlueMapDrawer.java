@@ -97,7 +97,7 @@ public final class XJCraftBaseHomeBlueMapDrawer extends JavaPlugin {
                 // 渲染所有玩家的Markers
                 XJCraftBlueMapContext.resetManager();
                 XJCraftBlueMapContext.getBlueMapManager()
-                        .renderAll(null);
+                        .renderAllHomeBaseMarker(null);
 
                 // 注册指令执行器
                 Optional.ofNullable(getCommand("xjb"))

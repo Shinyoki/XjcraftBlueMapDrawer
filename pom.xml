@@ -70,7 +70,7 @@
 
     <dependencies>
 
-<!--        BlueMap Api: v2.1.1-->
+<!--        BlueMap Api: v2.4.0-->
 <!--        XJCraftAudit: v1.4.4-->
 
 <!--        Spigot Api: 1.18-->
@@ -81,6 +81,7 @@
             <scope>provided</scope>
         </dependency>
 
+<!--        Jetbrains Annotations-->
         <dependency>
             <groupId>org.realityforge.org.jetbrains.annotations</groupId>
             <artifactId>org.jetbrains.annotations</artifactId>

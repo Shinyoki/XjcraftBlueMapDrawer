@@ -8,6 +8,7 @@ import java.util.List;
 
 /**
  * 重新读取配置文件
+ * /xjb reload
  *
  * @author senko
  * @date 2022/8/14 9:38

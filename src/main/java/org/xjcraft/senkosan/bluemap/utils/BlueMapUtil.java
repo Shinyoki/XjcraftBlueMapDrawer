@@ -2,7 +2,6 @@ package org.xjcraft.senkosan.bluemap.utils;
 
 import de.bluecolored.bluemap.api.BlueMapAPI;
 import de.bluecolored.bluemap.api.WebApp;
-import de.bluecolored.bluemap.api.markers.MarkerSet;
 import org.xjcraft.senkosan.bluemap.XJCraftBaseHomeBlueMapDrawer;
 import org.xjcraft.senkosan.bluemap.enums.MarkerType;
 
@@ -74,20 +73,33 @@ public class BlueMapUtil {
             // BlueMap默认的头像，文件位于 服务端/bluemap/web/ 文件夹
             playerHeadUrl =  "assets/steve.png";
         } else {
-            playerHeadUrl = MojangUtil.PLAYER_HEAD_API + uuid;
+            playerHeadUrl = uuid;
         }
 
         return htmlTemplate(playerName, playerHeadUrl);
     }
 
+    /**
+     * <html>
+     *     <div class="bm-marker-player" distance-data="near">
+     *         <img draggable="false" alt="玩家名" src="https://crafatar.com/avatars/正版玩家UUID"/>
+     *         <div class="bm-player-name">玩家名</div>
+     *     </div>
+     * </html>
+     * @param playerName        玩家名
+     * @param uuid              正版玩家UUID
+     * @return                  HTMLMarker模板
+     */
     private static String htmlTemplate(String playerName, String uuid) {
+        // distance-data 是BlueMap前端展示Players Marker的Div元素中的属性，Web会针对地图的缩放比例自动调整合适的值
+        // 目前没找到如何让自定义的Marker HTML元素也受前端同步控制，只能先写死一个固定值了
         return "<div class=\"bm-marker-player\" distance-data=\"near\">\n" +
-                "            <img draggable=\"false\" alt=\"" + playerName + "\" src=\"" + MojangUtil.PLAYER_HEAD_API + uuid + "\"/>\n" +
-                "            <div class=\"bm-player-name\">" + playerName + "</div>\n" +
-                "        </div>";
+                "  <img draggable=\"false\" alt=\"" + playerName + "\" src=\"" + MojangUtil.PLAYER_HEAD_API + uuid + "\"/>\n" +
+                "  <div class=\"bm-player-name\">" + playerName + "</div>\n" +
+                "</div>";
     }
 
-    public static String checkMapIcon(BaseIcon icon) {
+    public static void checkMapIcon(BaseIcon icon) {
         Path webRoot = getBlueMapAPI().getWebApp()
                 .getWebRoot();
         // 判断路径下是否存在 "data/images/icon.png" 文件
@@ -114,7 +126,6 @@ public class BlueMapUtil {
                 }
             });
         }
-        return iconPath;
     }
 
 

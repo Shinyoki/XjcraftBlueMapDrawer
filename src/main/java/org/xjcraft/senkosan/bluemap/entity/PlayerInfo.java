@@ -20,7 +20,7 @@ public class PlayerInfo implements Cloneable{
     private double x;
     private double y;
     private double z;
-    private int dimension = 1;           // 0: 主世界，1: nether，2: end
+    private int dimension = 0;           // 0: 主世界，1: nether，2: end
 
     public String getPlayerName() {
         return playerName;
@@ -77,6 +77,12 @@ public class PlayerInfo implements Cloneable{
     public PlayerInfo(String playerName, String playerUUID) {
         this.playerName = playerName;
         this.playerUUID = playerUUID;
+    }
+
+    public PlayerInfo(String playerName, String playerUUID, int dimension) {
+        this.playerName = playerName;
+        this.playerUUID = playerUUID;
+        this.dimension = dimension;
     }
 
     public PlayerInfo(String playerName, String playerUUID, int dimension, double x, double y, double z) {

@@ -47,10 +47,12 @@ public class MapConstants {
     public static final String ONLINE_PLAYER_MARKER_ID_SUFFIX = "";
     public static final String ONLINE_PLAYER_MARKER_LABEL_SUFFIX = "";
 
-    // TODO 小鸡服的地图ID MainLand、MainLand_nether、MainLand_the_end 以后记得改
-    public static final String MAIN_LAND_MAP_ID = "MainLand";
-    public static final String NETHER_MAP_ID = "MainLand_nether";
-    public static final String THE_END_MAP_ID = "MainLand_the_end";
+    /** 配置文件名 */
+    public static final String ONLINE_PLAYER_CONFIG_FILE_NAME = "online-player.yml";
+    /**
+     * 需被渲染在线玩家ConfigKey
+     */
+    public static final String ONLINE_PLAYER_CONFIG_KEY = "players";
 
     /**
      * HTML常量

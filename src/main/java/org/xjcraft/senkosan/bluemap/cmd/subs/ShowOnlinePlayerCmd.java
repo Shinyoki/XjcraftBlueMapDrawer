@@ -1,11 +1,5 @@
 package org.xjcraft.senkosan.bluemap.cmd.subs;
 
-import com.flowpowered.math.vector.Vector3d;
-import de.bluecolored.bluemap.api.BlueMapAPI;
-import de.bluecolored.bluemap.api.BlueMapMap;
-import de.bluecolored.bluemap.api.markers.HtmlMarker;
-import de.bluecolored.bluemap.api.markers.MarkerSet;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
@@ -17,17 +11,14 @@ import org.xjcraft.senkosan.bluemap.cmd.ICmd;
 import org.xjcraft.senkosan.bluemap.constants.MapConstants;
 import org.xjcraft.senkosan.bluemap.entity.PlayerInfo;
 import org.xjcraft.senkosan.bluemap.exception.XBMPluginException;
-import org.xjcraft.senkosan.bluemap.manager.DefaultBlueMapManager;
 import org.xjcraft.senkosan.bluemap.manager.XJCraftBlueMapContext;
-import org.xjcraft.senkosan.bluemap.marker.OnlinePlayerMarkerBuilder;
-import org.xjcraft.senkosan.bluemap.utils.BlueMapUtil;
 import org.xjcraft.senkosan.bluemap.utils.Log;
 import org.xjcraft.senkosan.bluemap.utils.MojangUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 显示或隐藏 自己在线时的玩家图标
@@ -46,20 +37,20 @@ public class ShowOnlinePlayerCmd extends ICmd {
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
-
             XJCraftBaseHomeBlueMapDrawer.submit(() -> {
+
                 // 显示自己在线时的玩家图标
                 YamlConfiguration cfg = new YamlConfiguration();
-                File yml = new File(XJCraftBaseHomeBlueMapDrawer.getInstance().getDataFolder(), "online-player.yml");
+                File yml = new File(XJCraftBaseHomeBlueMapDrawer.getInstance().getDataFolder(), MapConstants.ONLINE_PLAYER_CONFIG_FILE_NAME);
                 try {
                     cfg.load(yml);
                 } catch (IOException | InvalidConfigurationException e) {
-                    Log.d("加载online-player.yml配置文件失败！");
-                    throw new XBMPluginException("加载online-player.yml配置文件失败！", e);
+                    Log.d("加载" + MapConstants.ONLINE_PLAYER_CONFIG_FILE_NAME + "配置文件失败！");
+                    throw new XBMPluginException("加载" + MapConstants.ONLINE_PLAYER_CONFIG_FILE_NAME + "配置文件失败！", e);
                 }
                 String playerUUID = MojangUtil.getPlayerUUID(player.getName());
 
-                Log.info("玩家: " + player.getName() + " ，UUID: " + playerUUID + "的在线图标已显示。");
+                Log.info("玩家: " + player.getName() + " ，UUID: " + playerUUID + "开启了在线图标显示。");
                 Location location = player.getLocation();
                 XJCraftBaseHomeBlueMapDrawer.addOnlinePlayerCache(player.getName(), new PlayerInfo(
                         player.getName(),
@@ -69,13 +60,17 @@ public class ShowOnlinePlayerCmd extends ICmd {
                         location.getY(),
                         location.getZ()
                 ));
-                cfg.set(player.getName(), playerUUID);
+
                 try {
+                    // 存储玩家
+                    List<String> list = cfg.getStringList(MapConstants.ONLINE_PLAYER_CONFIG_KEY);
+                    list.add(player.getName());
+                    cfg.set(MapConstants.ONLINE_PLAYER_CONFIG_KEY, list);
                     // 存储到配置文件
                     cfg.save(yml);
                 } catch (IOException e) {
-                    Log.d("保存online-player.yml配置文件失败！");
-                    throw new XBMPluginException("保存online-player.yml配置文件失败！", e);
+                    Log.d("保存" + MapConstants.ONLINE_PLAYER_CONFIG_FILE_NAME + "配置文件失败！");
+                    throw new XBMPluginException("保存" + MapConstants.ONLINE_PLAYER_CONFIG_FILE_NAME + "配置文件失败！", e);
                 }
 
             });

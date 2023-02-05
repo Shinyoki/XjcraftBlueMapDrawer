@@ -22,7 +22,7 @@ public class ReloadConfigCmd extends ICmd {
     @Override
     public boolean onCommand(CommandSender sender, String[] args) {
         XJCraftBlueMapContext.reloadConfig();
-        sender.sendMessage("成功重新读取配置文件！如需立即生效，请使用/xjb render指令！");
+        sender.sendMessage("成功重新读取配置文件！");
         return true;
     }
 

@@ -30,7 +30,10 @@ public interface IRenderOnlinePlayerMarker {
 
     /**
      * 渲染在线玩家
+     *
+     * 弃用，关注{@link #updateMainLandOnlinePlayerMarker(String, String, int, Vector3d)}方法
      */
+    @Deprecated
     void renderOnlinePlayer(String playerName, String uuid, int dimension, double x, double y, double z);
     void renderOnlinePlayer(String playerName, String uuid, int dimension, Vector3d location);
 
@@ -46,5 +49,12 @@ public interface IRenderOnlinePlayerMarker {
         clearNetherOnlinePlayerMarker(playerName);
         clearTheEndOnlinePlayerMarker(playerName);
     }
+
+    /**
+     * 更新Marker坐标位置
+     */
+    void updateMainLandOnlinePlayerMarker(String playerName, String uuid, int dimension, double x, double y, double z);
+
+    void updateMainLandOnlinePlayerMarker(String playerName, String uuid, int dimension, Vector3d location);
 
 }

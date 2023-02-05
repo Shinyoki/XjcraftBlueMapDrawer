@@ -2,6 +2,7 @@ package org.xjcraft.senkosan.bluemap.manager;
 
 import com.flowpowered.math.vector.Vector3d;
 import de.bluecolored.bluemap.api.BlueMapMap;
+import de.bluecolored.bluemap.api.markers.Marker;
 import de.bluecolored.bluemap.api.markers.MarkerSet;
 import org.bukkit.Location;
 import org.xjcraft.senkosan.bluemap.enums.MarkerType;
@@ -9,7 +10,10 @@ import org.xjcraft.senkosan.bluemap.exception.XBMPluginException;
 import org.xjcraft.senkosan.bluemap.marker.HomeBaseMarkerBuilder;
 import org.xjcraft.senkosan.bluemap.marker.MarkerCreator;
 import org.xjcraft.senkosan.bluemap.marker.OnlinePlayerMarkerBuilder;
+import org.xjcraft.senkosan.bluemap.utils.Log;
 
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.xjcraft.senkosan.bluemap.constants.MapConstants.*;
@@ -22,78 +26,30 @@ public class DefaultBlueMapManager extends ConfigurableBlueMapManager {
 
     private MarkerCreator markerCreator = MarkerCreator.POI;
 
-    /**
-     * 主世界、地狱、下届的markerSet
-     */
-    private MarkerSet mainLandMarkerSet;
-    private MarkerSet netherMarkerSet;
-    private MarkerSet theEndMarkerSet;
-
-
-    public DefaultBlueMapManager() {
-        initMarkerSet();
-    }
-
-    private void initMarkerSet() {
-
-        Optional<BlueMapMap> mainLandMap = getMapApi().getMap(getMainLandMapName());
-        if (mainLandMap.isPresent()) {
-            mainLandMarkerSet = mainLandMap.get().getMarkerSets()
-                    .put(MAIN_LAND_ONLINE_PLAYER_MARKER_SET_ID, buildOnlinePlayerMarkerSet());
-        } else {
-            throw new XBMPluginException("主世界地图不存在，请检查配置文件中服务器地图名称是否正确");
-        }
-
-        Optional<BlueMapMap> netherMap = getMapApi().getMap(getNetherMapName());
-        if (netherMap.isPresent()) {
-            netherMarkerSet = netherMap.get().getMarkerSets()
-                    .put(NETHER_ONLINE_PLAYER_MARKER_SET_ID, buildOnlinePlayerMarkerSet());
-        } else {
-            throw new XBMPluginException("地狱地图不存在，请检查配置文件中服务器地图名称是否正确");
-        }
-
-        Optional<BlueMapMap> theEndMap = getMapApi().getMap(getTheEndMapName());
-        if (theEndMap.isPresent()) {
-            theEndMarkerSet = theEndMap.get().getMarkerSets()
-                    .put(THE_END_ONLINE_PLAYER_MARKER_SET_ID, buildOnlinePlayerMarkerSet());
-        } else {
-            throw new XBMPluginException("末地地图不存在，请检查配置文件中服务器地图名称是否正确");
-        }
-
-    }
-
     @Override
     public MarkerSet getMainLandOnlinePlayerMarkerSet() {
-        if (mainLandMarkerSet == null) {
-            mainLandMarkerSet = initMarkerSet(MAIN_LAND_MAP_ID, MAIN_LAND_ONLINE_PLAYER_MARKER_SET_ID);
-        }
-        return mainLandMarkerSet;
+        return initMarkerSet(getMainLandMapName(), MAIN_LAND_ONLINE_PLAYER_MARKER_SET_ID);
     }
 
     @Override
     public MarkerSet getNetherOnlinePlayerMarkerSet() {
-        if (netherMarkerSet == null) {
-            netherMarkerSet = initMarkerSet(NETHER_MAP_ID, NETHER_ONLINE_PLAYER_MARKER_SET_ID);
-        }
-        return netherMarkerSet;
+        return initMarkerSet(getNetherMapName(), NETHER_ONLINE_PLAYER_MARKER_SET_ID);
     }
 
     @Override
     public MarkerSet getTheEndOnlinePlayerMarkerSet() {
-        if (theEndMarkerSet == null) {
-            theEndMarkerSet = initMarkerSet(THE_END_MAP_ID, THE_END_ONLINE_PLAYER_MARKER_SET_ID);
-        }
-        return theEndMarkerSet;
+        return initMarkerSet(getTheEndMapName(), THE_END_ONLINE_PLAYER_MARKER_SET_ID);
     }
 
     /**
      * 渲染在线玩家
-     * @param playerName    玩家名称
-     * @param uuid          正版UUID
-     * @param dimension     所处维度 0:主世界 1:地狱 2:末地
-     * @param x             x坐标
-     * @param y             y坐标
-     * @param z             z坐标
+     *
+     * @param playerName 玩家名称
+     * @param uuid       正版UUID
+     * @param dimension  所处维度 0:主世界 1:地狱 2:末地
+     * @param x          x坐标
+     * @param y          y坐标
+     * @param z          z坐标
      */
     @Override
     public void renderOnlinePlayer(String playerName, String uuid, int dimension, double x, double y, double z) {
@@ -102,7 +58,7 @@ public class DefaultBlueMapManager extends ConfigurableBlueMapManager {
 
     @Override
     public void renderOnlinePlayer(String playerName, String uuid, int dimension, Vector3d location) {
-        System.out.println("渲染在线玩家: " + playerName + " " + uuid + " " + dimension + " " + location);
+        Log.d("渲染在线玩家: " + playerName + " " + uuid + " " + dimension + " " + location);
         // 渲染在线玩家
         switch (dimension) {
             case 0:
@@ -138,12 +94,61 @@ public class DefaultBlueMapManager extends ConfigurableBlueMapManager {
     }
 
     private MarkerSet initMarkerSet(String mapName, String markerSetId) {
+        Log.d("当前的地图名称: " + mapName + " 当前的标记集ID: " + markerSetId);
         Optional<BlueMapMap> map = getMapApi().getMap(mapName);
         if (map.isPresent()) {
-            return map.get().getMarkerSets()
-                    .put(markerSetId, buildOnlinePlayerMarkerSet());
+            MarkerSet markerSet = map.get().getMarkerSets()
+                    .get(markerSetId);
+            if (Objects.isNull(markerSet)) {
+                markerSet = buildOnlinePlayerMarkerSet();
+                map.get().getMarkerSets()
+                        .put(markerSetId, markerSet);
+            }
+            return markerSet;
         } else {
+            // TODO 关闭定时任务?
             throw new XBMPluginException("地图不存在，请检查配置文件中服务器地图名称是否正确");
+        }
+    }
+
+    @Override
+    public void updateMainLandOnlinePlayerMarker(String playerName, String uuid, int dimension, double x, double y, double z) {
+        updateMainLandOnlinePlayerMarker(playerName, uuid, dimension, new Vector3d(x, y, z));
+    }
+
+    @Override
+    public void updateMainLandOnlinePlayerMarker(String playerName, String uuid, int dimension, Vector3d location) {
+        Map<String, Marker> markers = null;
+        switch (dimension) {
+            case 0:
+                // 主世界
+                markers = getMainLandOnlinePlayerMarkerSet().getMarkers();
+                if (markers.containsKey(playerName)) {
+                    markers.get(playerName).setPosition(location);
+                } else {
+                    markers.put(playerName, OnlinePlayerMarkerBuilder.createMarker(playerName, uuid, location));
+                }
+                break;
+            case 1:
+                // 地狱
+                markers = getNetherOnlinePlayerMarkerSet().getMarkers();
+                if (markers.containsKey(playerName)) {
+                    markers.get(playerName).setPosition(location);
+                } else {
+                    markers.put(playerName, OnlinePlayerMarkerBuilder.createMarker(playerName, uuid, location));
+                }
+                break;
+            case 2:
+                // 末地
+                markers = getTheEndOnlinePlayerMarkerSet().getMarkers();
+                if (markers.containsKey(playerName)) {
+                    markers.get(playerName).setPosition(location);
+                } else {
+                    markers.put(playerName, OnlinePlayerMarkerBuilder.createMarker(playerName, uuid, location));
+                }
+                break;
+            default:
+                throw new XBMPluginException("未知的维度参数");
         }
     }
 

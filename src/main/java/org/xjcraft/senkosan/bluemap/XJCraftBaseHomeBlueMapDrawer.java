@@ -1,5 +1,6 @@
 package org.xjcraft.senkosan.bluemap;
 
+import com.flowpowered.math.vector.Vector3d;
 import de.bluecolored.bluemap.api.BlueMapAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -8,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.xjcraft.senkosan.bluemap.cmd.XBMCommandHandler;
+import org.xjcraft.senkosan.bluemap.constants.MapConstants;
 import org.xjcraft.senkosan.bluemap.entity.PlayerInfo;
 import org.xjcraft.senkosan.bluemap.exception.XBMPluginException;
 import org.xjcraft.senkosan.bluemap.listener.AuditStatusChangeListener;
@@ -21,10 +23,7 @@ import org.xjcraft.senkosan.bluemap.utils.Log;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public final class XJCraftBaseHomeBlueMapDrawer extends JavaPlugin {
 
@@ -33,6 +32,8 @@ public final class XJCraftBaseHomeBlueMapDrawer extends JavaPlugin {
     private static ExecutorService executorService;         // 线程池
     private static ScheduledExecutorService scheduledExecutorService; // 定时任务线程池
     private static final OnlinePlayerCache onlinePlayerCache = new OnlinePlayerCache(); // 在线玩家缓存
+
+    private DefaultBlueMapManager blueMapManager;           // Marker管理器
 
     public static void addOnlinePlayerCache(String playerName, PlayerInfo playerInfo) {
         onlinePlayerCache.addPlayer(playerName, playerInfo);
@@ -82,6 +83,7 @@ public final class XJCraftBaseHomeBlueMapDrawer extends JavaPlugin {
     }
 
     private void closeExecutors(ExecutorService... executorService) {
+        Log.d("正在关闭线程池...");
         for (ExecutorService service : executorService) {
             if (Objects.nonNull(service) && !service.isShutdown()) {
                 service.shutdown();
@@ -89,7 +91,6 @@ public final class XJCraftBaseHomeBlueMapDrawer extends JavaPlugin {
                 if (!service.isShutdown()) {
                     Log.info("线程池未能关闭！");
                     service.shutdownNow();
-
                 }
             }
         }
@@ -104,6 +105,7 @@ public final class XJCraftBaseHomeBlueMapDrawer extends JavaPlugin {
         // BlueMap加载好后再初始化
         BlueMapAPI.onEnable(api -> {
             this.init();
+            // BlueMap初始化后再执行定时任务
             this.scheduleOnlinePlayerRender();
             Log.info("初始化完成");
         });
@@ -118,18 +120,32 @@ public final class XJCraftBaseHomeBlueMapDrawer extends JavaPlugin {
         // 2s 间隔
         scheduledExecutorService.scheduleAtFixedRate(() -> {
             // 找在线玩家
-            DefaultBlueMapManager blueMapManager = XJCraftBlueMapContext.getBlueMapManager();
-            onlinePlayerCache.getOnlinePlayerCache().forEach((playerName, playerInfo) -> {
-                System.out.println("当前玩家：" + playerName + "所在区域: " + playerInfo.getDimension());
-                // TODO 不执行下面的代码
-                blueMapManager.renderOnlinePlayer(
-                        playerName,
-                        playerInfo.getPlayerUUID(),
-                        playerInfo.getDimension(),
-                        playerInfo.getLocation()
-                );
-            });
+
+            ConcurrentHashMap<String, PlayerInfo> playerCache = onlinePlayerCache.getOnlinePlayerCache();
+            Log.d("当前缓存玩家数量：" + playerCache.size() + "");
+            playerCache
+                    .forEach((playerName, playerInfo) -> {
+                        Log.d("当前玩家：" + playerName + "所在区域: " + playerInfo.getDimension());
+                        // TODO 登录后不自动添加缓存?
+                        Player onlinePlayer = getOnlinePlayer(playerName);
+                        if (Objects.nonNull(onlinePlayer)) {
+                            Location location = onlinePlayer.getLocation();
+                            blueMapManager.updateMainLandOnlinePlayerMarker(
+                                    playerName,
+                                    playerInfo.getPlayerUUID(),
+                                    blueMapManager.getDimensionByWorldName(onlinePlayer.getWorld().getName()),
+                                    new Vector3d(location.getX(), location.getY(), location.getZ())
+                            );
+                        }
+                    });
         }, 0, 2, TimeUnit.SECONDS);
+
+    }
+
+    private Player getOnlinePlayer(String playerName) {
+        return Bukkit.getOnlinePlayers().stream()
+                .filter(player -> player.getName().equals(playerName))
+                .findFirst().orElse(null);
     }
 
     /**
@@ -146,8 +162,8 @@ public final class XJCraftBaseHomeBlueMapDrawer extends JavaPlugin {
             // 需回到插件主线程
             Bukkit.getScheduler().runTask(this, () -> {
                 // 重载配置文件
-                this.saveDefaultConfig();
-                this.reloadConfig();
+//                this.saveDefaultConfig();
+//                this.reloadConfig();
 
                 // 判断插件是否已经加载好
                 checkInit();
@@ -159,8 +175,8 @@ public final class XJCraftBaseHomeBlueMapDrawer extends JavaPlugin {
 
                 // 渲染所有玩家的 家&基地Markers
                 XJCraftBlueMapContext.resetManager();
-                XJCraftBlueMapContext.getBlueMapManager()
-                        .renderAllHomeBaseMarker(null);
+                blueMapManager = XJCraftBlueMapContext.getBlueMapManager();
+                blueMapManager.renderAllHomeBaseMarker(null);
 
                 // 注册指令执行器
                 Optional.ofNullable(getCommand("xjb"))
@@ -172,7 +188,7 @@ public final class XJCraftBaseHomeBlueMapDrawer extends JavaPlugin {
                 // 添加监听器
                 PluginManager pluginManager = Bukkit.getPluginManager();
                 pluginManager.registerEvents(new AuditStatusChangeListener(), this);        // 认证状态变更监听器
-                pluginManager.registerEvents(new OnlinePlayerListener(), this);               // 玩家加入监听器
+                pluginManager.registerEvents(new OnlinePlayerListener(), this);             // 玩家加入监听器
                 Log.info("初始化完成");
             });
         } catch (Exception ignore) {
@@ -185,7 +201,7 @@ public final class XJCraftBaseHomeBlueMapDrawer extends JavaPlugin {
      */
     private void initOnlinePlayerCache() {
 
-        File onlinePlayerYml = new File(getDataFolder(), "online-player.yml");
+        File onlinePlayerYml = new File(getDataFolder(), MapConstants.ONLINE_PLAYER_CONFIG_FILE_NAME);
         if (!onlinePlayerYml.exists()) {
             try {
                 onlinePlayerYml.createNewFile();
@@ -198,7 +214,6 @@ public final class XJCraftBaseHomeBlueMapDrawer extends JavaPlugin {
         }
         YamlConfiguration cfg = YamlConfiguration.loadConfiguration(onlinePlayerYml);
         Collection<? extends Player> serverOnlinePlayers = Bukkit.getOnlinePlayers();
-        DefaultBlueMapManager blueMapManager = XJCraftBlueMapContext.getBlueMapManager();
 
         for (Player serverOnlinePlayer : serverOnlinePlayers) {
             // 根据在线玩家寻找是否也存在于配置文件中
@@ -207,33 +222,31 @@ public final class XJCraftBaseHomeBlueMapDrawer extends JavaPlugin {
                 // 不存在则该玩家不需要被渲染
                 continue;
             }
-            Location location = serverOnlinePlayer.getLocation();
             // 添加至缓存
             onlinePlayerCache.addPlayer(serverOnlinePlayer.getName(),
                     new PlayerInfo(
                             serverOnlinePlayer.getName(),
-                            uuid,
-                            blueMapManager.getDimensionByWorldName(serverOnlinePlayer.getWorld().getName()),
-                            location.getX(),
-                            location.getY(),
-                            location.getZ()
+                            uuid
                     ));
         }
 
     }
+
     private void checkInit() {
 
         PluginManager pluginManager = Bukkit.getPluginManager();
 
         Optional.ofNullable(pluginManager.getPlugin("BlueMap"))
                 .orElseThrow(() -> {
-                    Log.error("未能正确获取BlueMap插件，请检查是否正确加载了BlueMap插件");
+                    Log.error("未能正确获取BlueMap插件，请检查是否正确加载了BlueMap插件，本插件将停止运行");
+                    pluginManager.disablePlugin(this);
                     return new XBMPluginException("未能正确获取BlueMap插件，请检查是否正确加载了BlueMap插件");
                 });
 
         Optional.ofNullable(pluginManager.getPlugin("XJCraftAudit"))
                 .orElseThrow(() -> {
-                    Log.error("未能正确获取XJCraftAudit插件，请检查是否正确加载了XJCraftAudit插件");
+                    Log.error("未能正确获取XJCraftAudit插件，请检查是否正确加载了XJCraftAudit插件，本插件将停止运行");
+                    pluginManager.disablePlugin(this);
                     return new XBMPluginException("未能正确获取XJCraftAudit插件，请检查是否正确加载了XJCraftAudit插件");
                 });
 

@@ -11,6 +11,7 @@ import org.xjcraft.senkosan.bluemap.cmd.ICmd;
 import org.xjcraft.senkosan.bluemap.constants.MapConstants;
 import org.xjcraft.senkosan.bluemap.entity.PlayerInfo;
 import org.xjcraft.senkosan.bluemap.exception.XBMPluginException;
+import org.xjcraft.senkosan.bluemap.manager.DefaultBlueMapManager;
 import org.xjcraft.senkosan.bluemap.manager.XJCraftBlueMapContext;
 import org.xjcraft.senkosan.bluemap.utils.Log;
 import org.xjcraft.senkosan.bluemap.utils.MojangUtil;
@@ -18,7 +19,6 @@ import org.xjcraft.senkosan.bluemap.utils.MojangUtil;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * 显示或隐藏 自己在线时的玩家图标
@@ -28,8 +28,12 @@ import java.util.Objects;
  * @date 2023/2/4 14:41
  */
 public class ShowOnlinePlayerCmd extends ICmd {
+
+    private final DefaultBlueMapManager blueMapManager;
+
     public ShowOnlinePlayerCmd() {
         super("show", "显示自己在线时的玩家图标");
+        blueMapManager = XJCraftBlueMapContext.getBlueMapManager();
     }
 
     @Override
@@ -55,7 +59,7 @@ public class ShowOnlinePlayerCmd extends ICmd {
                 XJCraftBaseHomeBlueMapDrawer.addOnlinePlayerCache(player.getName(), new PlayerInfo(
                         player.getName(),
                         playerUUID,
-                        XJCraftBlueMapContext.getBlueMapManager().getDimensionByWorldName(location.getWorld().getName()),
+                        blueMapManager.getDimensionByWorldName(location.getWorld().getName()),
                         location.getX(),
                         location.getY(),
                         location.getZ()
@@ -76,13 +80,16 @@ public class ShowOnlinePlayerCmd extends ICmd {
             });
 
 
-            sender.sendMessage("等会卫星地图上应该会动态显示你的位置了！间隔可能有点长，请耐心等待！");
+            if (!blueMapManager.isEnableOnlinePlayerRender()) {
+                sender.sendMessage("目前卫星地图上不显示在线玩家图标，您需要等到管理员开启后才能显示！");
+            } else {
+                sender.sendMessage("等会卫星地图上应该会动态显示您的位置了！间隔可能有点长，请耐心等待！");
+            }
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
-            return true;
         } else {
-            sender.sendMessage("只有玩家才能执行此命令！");
-            return true;
+            sender.sendMessage("只有玩家才能执行该命令！");
         }
+        return true;
     }
 
     @Override

@@ -93,6 +93,13 @@ public class DefaultBlueMapManager extends ConfigurableBlueMapManager {
         getTheEndOnlinePlayerMarkerSet().getMarkers().remove(playerName);
     }
 
+    @Override
+    public void clearAllOnlinePlayerMarkers() {
+        getMainLandOnlinePlayerMarkerSet().getMarkers().clear();
+        getNetherOnlinePlayerMarkerSet().getMarkers().clear();
+        getTheEndOnlinePlayerMarkerSet().getMarkers().clear();
+    }
+
     private MarkerSet initMarkerSet(String mapName, String markerSetId) {
         Log.d("当前的地图名称: " + mapName + " 当前的标记集ID: " + markerSetId);
         Optional<BlueMapMap> map = getMapApi().getMap(mapName);

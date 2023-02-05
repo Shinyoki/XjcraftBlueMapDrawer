@@ -31,6 +31,9 @@ public final class XJCraftBaseHomeBlueMapDrawer extends JavaPlugin {
     private static XBMCommandHandler commandHandler;        // 指令处理器
     private static ExecutorService executorService;         // 线程池
     private static ScheduledExecutorService scheduledExecutorService; // 定时任务线程池
+
+    private ScheduledFuture<?> scheduledFuture;      // 定时任务
+
     private static final OnlinePlayerCache onlinePlayerCache = new OnlinePlayerCache(); // 在线玩家缓存
 
     private DefaultBlueMapManager blueMapManager;           // Marker管理器
@@ -45,6 +48,10 @@ public final class XJCraftBaseHomeBlueMapDrawer extends JavaPlugin {
 
     public static PlayerInfo getOnlinePlayerCache(String playerName) {
         return onlinePlayerCache.getOnlinePlayerCache().get(playerName);
+    }
+
+    public static void clearOnlinePlayerCache() {
+        onlinePlayerCache.clear();
     }
 
     public static boolean containsPlayer(String playerName) {
@@ -105,28 +112,38 @@ public final class XJCraftBaseHomeBlueMapDrawer extends JavaPlugin {
         // BlueMap加载好后再初始化
         BlueMapAPI.onEnable(api -> {
             this.init();
-            // BlueMap初始化后再执行定时任务
-            this.scheduleOnlinePlayerRender();
             Log.info("初始化完成");
         });
-        BlueMapAPI.onDisable(api -> this.onDisable());
+        BlueMapAPI.onDisable(api -> this.onDisable());  // 虽然总的来说会执行两次onDisable，但是影响不大，而且这样可以保险点
 
+    }
+
+    /**
+     * 停止定时任务
+     */
+    public void cancelScheduleOnlinePlayerRender() {
+        if (Objects.nonNull(scheduledFuture)) {
+            scheduledFuture.cancel(true);
+        }
+    }
+
+    public ScheduledFuture<?> getScheduledFuture() {
+        return scheduledFuture;
     }
 
     /**
      * 定时更新在线玩家的位置
      */
-    private void scheduleOnlinePlayerRender() {
+    public void scheduleOnlinePlayerRender() {
+        Log.d("开始定时更新在线玩家位置");
         // 2s 间隔
-        scheduledExecutorService.scheduleAtFixedRate(() -> {
+        scheduledFuture = scheduledExecutorService.scheduleAtFixedRate(() -> {
             // 找在线玩家
-
             ConcurrentHashMap<String, PlayerInfo> playerCache = onlinePlayerCache.getOnlinePlayerCache();
             Log.d("当前缓存玩家数量：" + playerCache.size() + "");
             playerCache
                     .forEach((playerName, playerInfo) -> {
                         Log.d("当前玩家：" + playerName + "所在区域: " + playerInfo.getDimension());
-                        // TODO 登录后不自动添加缓存?
                         Player onlinePlayer = getOnlinePlayer(playerName);
                         if (Objects.nonNull(onlinePlayer)) {
                             Location location = onlinePlayer.getLocation();
@@ -177,6 +194,14 @@ public final class XJCraftBaseHomeBlueMapDrawer extends JavaPlugin {
                 XJCraftBlueMapContext.resetManager();
                 blueMapManager = XJCraftBlueMapContext.getBlueMapManager();
                 blueMapManager.renderAllHomeBaseMarker(null);
+
+                // BlueMap初始化后再执行定时任务
+                if (blueMapManager.isEnableOnlinePlayerRender()) {
+                    Log.d("启用在线玩家渲染");
+                    this.scheduleOnlinePlayerRender();
+                } else {
+                    Log.info("当前已禁用在线玩家Marker的渲染");
+                }
 
                 // 注册指令执行器
                 Optional.ofNullable(getCommand("xjb"))

@@ -44,6 +44,8 @@ public interface IRenderOnlinePlayerMarker {
     void clearNetherOnlinePlayerMarker(String playerName);
     void clearTheEndOnlinePlayerMarker(String playerName);
 
+    void clearAllOnlinePlayerMarkers();
+
     default void clearAllOnlinePlayerMarker(String playerName) {
         clearMainLandOnlinePlayerMarker(playerName);
         clearNetherOnlinePlayerMarker(playerName);

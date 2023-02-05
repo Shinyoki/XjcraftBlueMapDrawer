@@ -21,6 +21,8 @@ public class SenkoBlueMapConfig {
 
         public static String SERVER_MAP_NAME = "MainLand";
 
+        public static Boolean ENABLE_ONLINE_PLAYER_MARKER_RENDER = Boolean.TRUE;
+
     }
 
     /**
@@ -36,6 +38,8 @@ public class SenkoBlueMapConfig {
         public static final String DEBUG_MODE = "senko.debug-mode";                             // 是否开启调试模式
 
         public static final String SERVER_MAP_NAME = "senko.xjcraft.server-map-name";
+
+        public static final String ENABLE_ONLINE_PLAYER_MARKER_RENDER = "senko.render.enable-online-player-marker-render";
 
     }
 

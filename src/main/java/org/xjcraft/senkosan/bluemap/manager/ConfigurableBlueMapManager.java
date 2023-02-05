@@ -44,6 +44,8 @@ public abstract class ConfigurableBlueMapManager extends AbstractMarkerManager {
     private String playerMetaFolder;
     // 服务器地图名称
     private String serverMapName;
+    // 开启在线玩家渲染
+    private boolean enableOnlinePlayerRender = true;
 
     public ConfigurableBlueMapManager() {
         this.applyHelper = AuditPlugin.getPlugin()
@@ -143,6 +145,8 @@ public abstract class ConfigurableBlueMapManager extends AbstractMarkerManager {
                     .orElse(DEFAULT_VALUE.DEFAULT_SHOW_BASE);
             this.serverMapName = Optional.of(pluginConfig.getString(KEY.SERVER_MAP_NAME))
                     .orElse(DEFAULT_VALUE.SERVER_MAP_NAME);
+            this.enableOnlinePlayerRender = Optional.of(pluginConfig.getBoolean(KEY.ENABLE_ONLINE_PLAYER_MARKER_RENDER))
+                    .orElse(DEFAULT_VALUE.ENABLE_ONLINE_PLAYER_MARKER_RENDER);
         } catch (XBMPluginException e) {
             Log.warning(e.getMessage());
         }
@@ -183,6 +187,10 @@ public abstract class ConfigurableBlueMapManager extends AbstractMarkerManager {
 
     public boolean isDefaultShowBase() {
         return defaultShowBase;
+    }
+
+    public boolean isEnableOnlinePlayerRender() {
+        return enableOnlinePlayerRender;
     }
 
     public Future<?> renderMarkerAsynchronously(String playerName) {

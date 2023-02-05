@@ -1,9 +1,11 @@
 package org.xjcraft.senkosan.bluemap.manager;
 
+import org.xjcraft.senkosan.bluemap.XJCraftBaseHomeBlueMapDrawer;
 import org.xjcraft.senkosan.bluemap.marker.MarkerCreator;
 import org.xjcraft.senkosan.bluemap.utils.Log;
 
 import java.util.Objects;
+import java.util.concurrent.ScheduledFuture;
 
 /**
  * @author senko
@@ -32,7 +34,25 @@ public class XJCraftBlueMapContext {
      */
     public static void reloadConfig() {
         resetManager();
-        getBlueMapManager().reloadConfig();
+        DefaultBlueMapManager blueMapManager = getBlueMapManager();
+        blueMapManager.reloadConfig();
+
+        XJCraftBaseHomeBlueMapDrawer plugin = XJCraftBaseHomeBlueMapDrawer.getInstance();
+        if (blueMapManager.isEnableOnlinePlayerRender()) {
+            // 开启在线渲染
+            ScheduledFuture<?> scheduledFuture = plugin.getScheduledFuture();
+            if (Objects.isNull(scheduledFuture) || scheduledFuture.isCancelled()) {
+                plugin.scheduleOnlinePlayerRender();
+            }
+        } else {
+            // 关闭在线渲染
+            blueMapManager.clearAllOnlinePlayerMarkers();
+            XJCraftBaseHomeBlueMapDrawer.clearOnlinePlayerCache();
+            ScheduledFuture<?> scheduledFuture = plugin.getScheduledFuture();
+            if (Objects.nonNull(scheduledFuture) && !scheduledFuture.isCancelled()) {
+                scheduledFuture.cancel(true);
+            }
+        }
         Log.info("重新读取配置文件完成！");
     }
 

@@ -4,6 +4,8 @@ senko:
     # 自动显示marker
     default-show-home: false
     default-show-base: true
+    # 开启在线玩家Marker渲染
+    enable-online-player-marker-render: true
   xjcraft:
     # 与XJcraftAudit中设置玩家命令方块的配置名保持一致
     town-cmdlocation: 'town-cmdlocation'
@@ -11,4 +13,4 @@ senko:
     # 存放玩家认证信息文件的所在文件夹相对路径 如 status
     apply-player-meta-path: 'status'
     # 服务器地图名称，如MainLand
-    server-map-name: 'world'
+    server-map-name: 'MainLand'

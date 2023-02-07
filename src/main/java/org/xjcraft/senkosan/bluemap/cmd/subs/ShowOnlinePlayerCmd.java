@@ -68,7 +68,9 @@ public class ShowOnlinePlayerCmd extends ICmd {
                 try {
                     // 存储玩家
                     List<String> list = cfg.getStringList(MapConstants.ONLINE_PLAYER_CONFIG_KEY);
-                    list.add(player.getName());
+                    if (!list.contains(player.getName())) {
+                        list.add(player.getName());
+                    }
                     cfg.set(MapConstants.ONLINE_PLAYER_CONFIG_KEY, list);
                     // 存储到配置文件
                     cfg.save(yml);

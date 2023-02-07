@@ -47,7 +47,8 @@ public abstract class AbstractMarkerManager implements IRenderOnlinePlayerMarker
             Bukkit.getPluginManager().disablePlugin(XJCraftBaseHomeBlueMapDrawer.getInstance());
             return new XBMPluginException("未能正确获取BlueMap相关API，请检查是否正确加载了BlueMap插件");
         });
-        this.mainLandMap = mapApi.getMap("world").orElseThrow(() -> {
+
+        this.mainLandMap = mapApi.getMap("mainland").orElseThrow(() -> {
             Bukkit.getPluginManager().disablePlugin(XJCraftBaseHomeBlueMapDrawer.getInstance());
             return new XBMPluginException("未能正确获取BlueMap地图，请检查是否正确加载了BlueMap插件");
         });
